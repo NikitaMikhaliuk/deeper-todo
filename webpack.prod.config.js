@@ -13,11 +13,11 @@ module.exports = {
   },
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true
-    }),
-    new webpack.DefinePlugin({
-      NODE_ENV: 'production'
     }),
     new webpack.NoEmitOnErrorsPlugin()
   ],
