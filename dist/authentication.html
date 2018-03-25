@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Deeper Todo</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  </head>
+  <body>
+    <header>
+      <img src="/ic_list_white_48px.svg" class="logo">
+      <h1>DeeperTodo</h1>
+      
+    </header>
+    <main>
+      <div  class="form-wrapper">
+        <div class="auth-switcher">
+          <button class="button" id="register-switch">REGISTER</button>
+          <button class="button" id="login-switch" autofocus>LOGIN</button>
+        </div>
+        <form method="post" action="/login" id="auth">        
+          <label>
+            Login:<br/>
+            <input
+              type="text"
+              name="login"
+              pattern="\w{5,}"
+              title="Login can include only latin letters, numbers and '_' symbol">
+          </label>
+          <br/> <br/>
+          <label>
+            Password:<br/>
+            <input
+            type="password"
+            name="password"
+            pattern="(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
+            title="Password should have minimum 8 signs, including at least one uppercase letter, lowercase letter and number">           
+          </label>
+          <br/><br/>
+          <button id="submit" type="submit" class="button">LOGIN</button>
+        </form>
+      </div>      
+    </main>
+    <script src="./auth.bundle.js"></script>
+  </body>
+</html>
