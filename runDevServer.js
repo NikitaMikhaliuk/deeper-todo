@@ -4,7 +4,7 @@ var webpackHotMiddleware = require('webpack-hot-middleware');
 var config = require('./webpack.dev.config');
 const server = require('./server');
 
-const port = 3000;
+const PORT = process.env.PORT || 5000;
 
 var compiler = webpack(config);
 server.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
@@ -17,6 +17,6 @@ server.listen(port, function(error) {
   if (error) {
     console.error(error)
   } else {
-    console.info("==> 🌎  Listening on port %s. Open up http://localhost:%s/ in your browser.", port, port)
+    console.info("==> 🌎  Listening on port %s. Open up http://localhost:%s/ in your browser.", PORT, PORT)
   }
 })
