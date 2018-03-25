@@ -13,7 +13,7 @@ server.use(webpackHotMiddleware(compiler));
 const express = require('express')
 server.use(express.static('dist'))
 
-server.listen(port, function(error) {
+server.listen(PORT, function(error) {
   if (error) {
     console.error(error)
   } else {

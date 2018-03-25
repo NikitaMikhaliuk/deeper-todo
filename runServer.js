@@ -4,7 +4,7 @@ const PORT = process.env.PORT || 5000;
 const express = require('express')
 server.use(express.static('dist'))
 
-server.listen(port, function(error) {
+server.listen(PORT, function(error) {
   if (error) {
     console.error(error)
   } else {
