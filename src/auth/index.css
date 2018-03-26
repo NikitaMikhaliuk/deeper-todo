@@ -47,7 +47,7 @@ main {
   background-color: #f5f5f5;
 }
 
-.button:active, .button-focused {
+.button:active, .button:focus, .button-focused {
   background-color: #f5f5f5;
   border-bottom: 5px rgb(103, 58, 183) solid;
   outline: none;
