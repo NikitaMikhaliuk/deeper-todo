@@ -47,7 +47,7 @@ main {
   background-color: #f5f5f5;
 }
 
-.button:active, .button:focus, .button-focused {
+.button:active, .button-focused {
   background-color: #f5f5f5;
   border-bottom: 5px rgb(103, 58, 183) solid;
   outline: none;
@@ -59,18 +59,22 @@ main {
   width: 300px;
   font-size: 20px;
   box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  
 }
 .auth-switcher {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-content: center;
   height: 100%;
 }
+
 input {
   width: 100%;
   font-size: 20px;
   border: 1px #757575 solid;
   border-bottom: 5px #757575 solid;
+  box-sizing: border-box;
 }
 input:focus {
   border-bottom: 5px rgb(103, 58, 183) solid;

@@ -38,7 +38,7 @@ export default class Sidebar extends Component {
       <aside style={{
         flexGrow: '1',
         maxWidth: '500px',
-        height: '600px',
+        height: '100%',
         margin: '10px'
       }}>
         <Paper zDepth={1} style ={{

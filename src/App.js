@@ -30,7 +30,7 @@ class App extends Component {
               undoDisabled={!todoList.prevState}
               redoDisabled={!todoList.nextState} />
           )} />
-          <div style={{display: 'flex'}}>
+          <div style={{display: 'flex', height: '100%'}}>
             <Route render={() => (
               <Sidebar 
                 actions={actions}

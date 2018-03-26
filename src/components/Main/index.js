@@ -34,7 +34,7 @@ export default class Main extends Component {
     return (
       <main style={{
         flexGrow: '3',
-        height: '600px',
+        height: '100%',
         margin: '10px'
       }}>
         <Paper zDepth={1} style ={{
