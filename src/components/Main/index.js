@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TodoItemsList from '../TodoItemsList';
 import TodoItemEditForm from '../TodoItemEditForm';
 import uid from 'uid';
+import './index.css';
 
 export default class Main extends Component {
   constructor(props) {
@@ -32,11 +33,7 @@ export default class Main extends Component {
     const { chosenCategory, chosenItemToEditId, itemsStorage, actions, filter, showCompleted, rootLinkpath } = this.props;
     const linkPath = chosenCategory ? chosenCategory.linkPath : '/';
     return (
-      <main style={{
-        flexGrow: '3',
-        height: '100%',
-        margin: '10px'
-      }}>
+      <main className='b-main'>
         <Paper zDepth={1} style ={{
           width: '100%',
           height: '100%',
@@ -45,10 +42,7 @@ export default class Main extends Component {
             <Route exact path={linkPath + (filter ? `&filter=${filter}` : '')} render={() => {
               return chosenCategory ?
                 (<div>
-                  <div style ={{
-                    marginLeft: '10px',
-                    marginBottom: '20px'
-                  }}>
+                  <div className='b-main__add-task-form'>
                     <TextField
                       onChange={this.handleAddItemInputChange}
                       value={this.state.addItemValue}

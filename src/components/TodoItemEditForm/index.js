@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { grey400 } from 'material-ui/styles/colors';
+import './index.css';
 
-const styles = {
-  linkstyle: {
-    margin: '20px'
-  },
-}
+// const styles = {
+//   linkstyle: {
+//     margin: '20px'
+//   },
+// }
 
 
 export default class TodoItemEditForm extends Component {
@@ -56,28 +57,23 @@ export default class TodoItemEditForm extends Component {
   render() {
     return (
       <div>
-        <div style={{
-            float: 'right',
-            margin: '15px'
-          }}>
+        <div className='b-todoitem-edit-form__controls'>
           <Link 
-            className='link'
-            style={styles.linkstyle}
+            className='b-todoitem-edit-form__link-button'
             to={this.props.parentCatLinkPath + (this.props.filter ? `&filter=${this.props.filter}` : '')}>
             <RaisedButton
               label='Save changes'
               onClick={this.handleSubmitItemEdit} />
           </Link>
           <Link 
-            style={styles.linkstyle}
-            className='link'
+            className='b-todoitem-edit-form__link-button'
             to={this.props.parentCatLinkPath + (this.props.filter ? `&filter=${this.props.filter}` : '')}>
             <RaisedButton
               label='Cancel'
               onClick={this.handleCancelEdit} />
           </Link>
         </div>
-        <div style={{clear: 'both', padding: '15px'}}>
+        <div className='b-todoitem-edit-form__inputs-container'>
           <TextField
           value={this.state.itemNameInputValue}
           onChange={this.handleItemNameInput}

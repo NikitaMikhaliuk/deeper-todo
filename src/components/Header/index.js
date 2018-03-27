@@ -13,6 +13,7 @@ import Redo from 'material-ui/svg-icons/content/redo';
 import List from 'material-ui/svg-icons/action/list';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import HeaderIconButton from './HeaderIconButton';
+import './index.css';
 
 export default class Header extends Component {
   constructor(props) {
@@ -64,7 +65,7 @@ export default class Header extends Component {
       </HeaderIconButton>
     );
     return (
-      <header  style={{marginBottom: '10px'}}>
+      <header className='b-header'>
         <AppBar
         title={<span>DeeperTodo</span>}
         titleStyle={{margin: 'auto 10px'}}
@@ -75,11 +76,8 @@ export default class Header extends Component {
         </AppBar>
         <Subheader>Total progerss</Subheader>
         <LinearProgress mode='determinate' value={completed} style={{marginBottom: '10px'}} />
-        <div style={{display: 'flex', 
-          alignItems: 'center', 
-          height: '100%',
-          justifyContent: 'space-between'}}>
-          <div style={{marginBottom: '15px'}} >
+        <div className='b-header__control-panel'>
+          <div>
             <RaisedButton
               label='UNDO'
               onClick={this.handleUndoClick}
@@ -98,24 +96,22 @@ export default class Header extends Component {
             <Checkbox
               checked={this.props.showCompleted}
               label='Show done'
-              onCheck={this.handleShowDoneCheck}/>
-            <div>            
-              <TextField
-                type='search'
-                placeholder='Filter'
-                value={this.state.filter}
-                onChange={this.handleFilterChange}
-                inputStyle={{
-                  fontSize: '110%'
-                }}
-                id={'1'}/>
-              <Link style={{ color: 'inherit', textDecoration: 'none',}} 
-                to={this.props.currentLinkPath + (this.state.filter ? `&filter=${this.state.filter}` : '')}>
-                <FlatButton 
-                  onClick={this.handleSubmitFilter}
-                  label='Search'/>
-              </Link>              
-            </div>
+              onCheck={this.handleShowDoneCheck}/>            
+            <TextField
+              type='search'
+              placeholder='Filter'
+              value={this.state.filter}
+              onChange={this.handleFilterChange}
+              inputStyle={{
+                fontSize: '110%'
+              }}
+              id={'1'}/>
+            <Link style={{ color: 'inherit', textDecoration: 'none',}} 
+              to={this.props.currentLinkPath + (this.state.filter ? `&filter=${this.state.filter}` : '')}>
+              <FlatButton 
+                onClick={this.handleSubmitFilter}
+                label='Search'/>
+            </Link>
           </div>
         </div>
         <Divider />

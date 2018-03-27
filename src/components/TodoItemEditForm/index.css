@@ -1,0 +1,13 @@
+.b-todoitem-edit-form__controls {
+  float: right;
+  margin: 15px;
+}
+
+.b-todoitem-edit-form__link-button {
+  margin: 15px;
+}
+
+.b-todoitem-edit-form__inputs-container {
+  clear: both;
+  padding: 15px;
+}

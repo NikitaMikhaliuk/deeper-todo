@@ -1,0 +1,11 @@
+.b-aside {
+  flex-grow: 1;
+  max-width: 500px;
+  height: 100%;
+  margin: 10px;
+}
+
+.b-aside__add-cat-input-form {
+  margin-left: 5px;
+  margin-bottom: 20px;
+}

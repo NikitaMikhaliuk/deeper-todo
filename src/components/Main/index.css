@@ -1,0 +1,10 @@
+.b-main {
+  flex-grow: 3;
+  height: 100%;
+  margin: 10px;
+}
+
+.b-main__add-task-form {
+  margin-left: 10px;
+  margin-bottom: 20px;
+}

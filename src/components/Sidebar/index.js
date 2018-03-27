@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TodoCategoriesList from '../TodoCategoriesList';
 import uid from 'uid';
 import { nameToUrl } from '../../utils/url-name-transforms';
+import './index.css';
 
 export default class Sidebar extends Component {
   constructor(props) {
@@ -35,20 +36,12 @@ export default class Sidebar extends Component {
 
   render() {    
     return (
-      <aside style={{
-        flexGrow: '1',
-        maxWidth: '500px',
-        height: '100%',
-        margin: '10px'
-      }}>
+      <aside className='b-aside'>
         <Paper zDepth={1} style ={{
           width: '100%',
           height: '100%',
         }}>
-          <div style ={{
-            marginLeft: '5px',
-            marginBottom: '20px'
-          }}>
+          <div className='b-aside__add-cat-input-form'>
             <TextField
               type='text'
               hintText='Enter Category Title'
