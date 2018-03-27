@@ -21,23 +21,51 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function login(req, res, next) {
-  logger.info('login request')
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { return next(err); }
-    if (!user) { return res.redirect('/'); }
-    req.logIn(user, function(err) {
-      if (err) { return next(err); }
-      return res.redirect('/app/' + user.username);
-    });
-  })(req, res, next);
+  logger.info('login request');
+  if (!req.body.login.match(/\w{5,}/) || !req.body.password.match(/(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/)) { 
+    res.statusCode = 401;
+    res.statusMessage = 'Incorrect Login or Password';
+    res.end()
+  } else {
+    passport.authenticate('local', function(err, user, info) {
+      if (err) {
+        res.statusCode = 502;
+        res.end('Sorry, unable to login') 
+      }
+      if (!user) { 
+        res.statusCode = 401; 
+        res.statusMessage = 'Incorrect Login or Password';
+        res.end();
+      } else {
+        req.logIn(user, function(err) {
+          if (err) { return next(err); }
+          res.json( {redirect: '/app/' + user.username});
+          res.end();
+        });
+      }      
+    })(req, res, next);
+  }  
 }
 
 app.post('/login', login);
 
 app.post('/register', function(req, res, next) {
-  processRequests.createUser(req.body.login, req.body.password, () => {
-  login(req, res, next);
-  });
+  if (!req.body.login.match(/\w{5,}/) || !req.body.password.match(/(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/)) {
+    res.statusCode = 401;
+    res.end('Incorrect Login or Password');
+  } else {    
+    processRequests.getUser(req.body.login, (err, user) => {
+      if (user) {
+        res.statusCode = 401;
+        res.statusMessage = 'User is alredy exists';
+        res.end();
+      } else {
+        processRequests.createUser(req.body.login, req.body.password, () => {
+          login(req, res, next);
+        });
+      }
+    });
+  }  
 });
 
 app.get('/app/:username*', function(req, res) {

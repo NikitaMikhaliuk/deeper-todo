@@ -12,7 +12,7 @@ module.exports = function configureLocalStrategy(passport) {
         done(err);
       }
       if (!user) {
-        done(null, false, { message: 'Incorrect username.' });
+        done(null, false, { message: 'Incorrect login.' });
       } else {
         user.validPassword(password, done)
       }

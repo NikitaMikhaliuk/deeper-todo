@@ -74,7 +74,7 @@ export default class Header extends Component {
         iconElementRight={exitButton}
         iconStyleRight={{margin: 'auto 0'}}>
         </AppBar>
-        <Subheader>Total progerss</Subheader>
+        <Subheader>Total progress</Subheader>
         <LinearProgress mode='determinate' value={completed} style={{marginBottom: '10px'}} />
         <div className='b-header__control-panel'>
           <div>

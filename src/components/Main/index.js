@@ -23,10 +23,12 @@ export default class Main extends Component {
   }
 
   handleSubmitAddItem = () => {
+    if (this.state.addItemValue) {
+      this.props.actions.AddTodoItem(uid(), this.state.addItemValue, this.props.chosenCategoryId);
     this.setState({
       addItemValue: ''
     });
-    this.props.actions.AddTodoItem(uid(), this.state.addItemValue, this.props.chosenCategoryId)
+    }    
   }
 
   render() {

@@ -17,22 +17,24 @@
           <button class="button button-focused" id="login-switch" >LOGIN</button>
         </div>
         <form method="post" action="/login" id="auth">        
-          <label>
+          <label id="login">
             Login:<br/>
             <input
+              required
               type="text"
               name="login"
               pattern="\w{5,}"
               title="Login can include only latin letters, numbers and '_' symbol">
           </label>
           <br/> <br/>
-          <label>
+          <label id="password">
             Password:<br/>
             <input
-            type="password"
-            name="password"
-            pattern="(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
-            title="Password should have minimum 8 signs, including at least one uppercase letter, lowercase letter and number">           
+              required
+              type="password"
+              name="password"
+              pattern="(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$"
+              title="Password should have minimum 8 signs, including at least one uppercase letter, lowercase letter and number">           
           </label>
           <br/><br/>
           <button id="submit" type="submit" class="button">LOGIN</button>
