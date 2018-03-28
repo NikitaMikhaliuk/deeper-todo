@@ -85,6 +85,7 @@ export default class TodoItemEditForm extends Component {
             onCheck={this.handleDoneCheckbox}/>
           <br />
           <TextField
+            hintText='Task Description'
             value={this.state.itemDescriptionInputValue}
             onChange={this.handleItemDescriptionInput}
             fullWidth={true}
