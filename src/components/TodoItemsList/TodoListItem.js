@@ -29,6 +29,9 @@ export default class TodoListItem extends Component {
         onClick={this.handleListItemSelect}
         key={id}
         primaryText={ <div style={{maxWidth: '600px', overflow: 'hidden'}}>{todoItem.name}</div>}
+        secondaryText={todoItem.description ? <span style={{maxWidth: '600px', overflow: 'hidden'}}>{todoItem.description}</span>
+          : ''}
+        secondaryTextLines={2}
         rightIconButton={
           <Link style={{ color: 'inherit', textDecoration: 'none',}} 
             to={!todoItem.completed ? itemLinkPath : parentCatLinkPath}>
