@@ -14,7 +14,7 @@ git clone https://github.com/EmptyChild/deeper-todo.git
 * `npm install`
 
 ### Run App
-* Install and run MongoBD instance (https://www.mongodb.com/)
+* Install and run MongoDB instance (https://www.mongodb.com/)
 * open bash in this folder
 * `npm run build`
 * Change start script in package.json to `set MONGO_URI=[your MongoDB instance URI] && node runServer.js`
