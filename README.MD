@@ -17,7 +17,6 @@ git clone https://github.com/EmptyChild/deeper-todo.git
 * Install and run MongoDB instance (https://www.mongodb.com/)
 * open bash in this folder
 * `npm run build`
-* Change start script in package.json to `set MONGO_URI=[your MongoDB instance URI] && node runServer.js`
-* `npm run start`
+* Run `MONGO_URI=[your MongoDB instance URI] npm run start` in your bash command shell
 
 open http://localhost:5000
