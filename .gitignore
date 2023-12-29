@@ -3,3 +3,4 @@ node_modules
 .vscode/settings.json
 .editorconfig
 .vscode/launch.json
+.env

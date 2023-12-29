@@ -5,8 +5,8 @@
   "main": "runServer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node runDevServer.js",
-    "start": "node runServer.js",
+    "dev": "node --env-file=.env runDevServer.js",
+    "start": "node --env-file=.env runServer.js",
     "build": "set NODE_ENV=production && webpack --config webpack.prod.config.js"
   },
   "author": "EmptyChild",
@@ -38,7 +38,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
-    "bcrypt": "^1.0.3",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
     "express-session": "^1.15.6",
@@ -60,7 +60,8 @@
     "winston": "^2.4.1"
   },
   "engines": {
-    "node": "8.9.x",
-    "npm": "5.6.x"
+    "node": ">=20.10.x",
+    "npm": ">=10.2.x",
+    "pnpm": ">=8.13.x"
   }
 }
