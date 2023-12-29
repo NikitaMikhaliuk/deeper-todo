@@ -5,8 +5,8 @@
   "main": "runServer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node runDevServer.js",
-    "start": "node runServer.js",
+    "dev": "node --env-file=.env runDevServer.js",
+    "start": "node --env-file=.env runServer.js",
     "build": "set NODE_ENV=production && webpack --config webpack.prod.config.js"
   },
   "author": "EmptyChild",
