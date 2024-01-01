@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const Schema = mongoose.Schema;
-const getDBConnection = require('../getdbconnection.js');
-const UserSchema = Schema(
+import mongoose from 'mongoose';
+import { compare, hash } from 'bcrypt';
+import getDBConnection from '../getdbconnection.js';
+
+const UserSchema = mongoose.Schema(
     {
         username: {
             type: String,
@@ -22,12 +22,12 @@ const UserSchema = Schema(
 );
 
 UserSchema.methods.validPassword = function (password, callback) {
-    const user = this;
-    bcrypt.compare(password, user.hashedPassword, function (err, res) {
+    // const user = this;
+    compare(password, this.hashedPassword, (err, res) => {
         if (!res) {
             callback(null, false, { message: 'Incorrect password.' });
         } else {
-            callback(null, user);
+            callback(null, this);
         }
     });
 };
@@ -38,14 +38,14 @@ UserSchema.statics.createUser = function (
     todoListId,
     callback
 ) {
-    const User = this;
-    bcrypt.hash(password, 10, function hashPassword(err, hashedPassword) {
-        const user = new User({
+    // const User = this;
+    hash(password, 10, (err, hashedPassword) => {
+        const user = new this({
             username,
             hashedPassword,
             todoListId,
         });
-        user.save(function (err) {
+        user.save((err) => {
             if (err) {
                 console.log(err);
                 return;
@@ -57,4 +57,4 @@ UserSchema.statics.createUser = function (
 };
 UserSchema.set('autoIndex', false);
 const User = getDBConnection('User', UserSchema);
-module.exports = User;
+export default User;

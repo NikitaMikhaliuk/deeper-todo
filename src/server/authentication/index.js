@@ -1,3 +1,3 @@
-const passport = require('passport');
-const configureLocal = require('./configure-local');
-module.exports = configureLocal(passport);
+import passport from 'passport';
+import configureLocal from './configure-local';
+export default configureLocal(passport);

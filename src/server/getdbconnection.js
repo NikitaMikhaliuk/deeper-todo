@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const logger = require('./logger');
+import mongoose from 'mongoose';
+import logger from './logger';
 const connection = mongoose.createConnection(process.env.MONGO_URI);
 connection.on('error', (error) => {
     console.log('connection error:');
@@ -9,6 +9,6 @@ connection.once('open', function () {
     logger.info('Successfully connected to database!');
 });
 
-module.exports = function getDBConnection(querry, Schema) {
+export default function getDBConnection(querry, Schema) {
     return connection.model(querry, Schema);
-};
+}

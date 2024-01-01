@@ -1,12 +1,25 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const passport = require('./authentication');
-const processRequests = require('./requestProcessor');
-const logger = require('./logger');
-const path = require('path');
-const favicon = require('serve-favicon');
-var app = express();
+import express from 'express';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import passport from './authentication';
+import {
+    getUser,
+    createUser,
+    getTodoList,
+    addCategory,
+    deleteCategory,
+    renameCategory,
+    addTodoTask,
+    editTodoTask,
+    moveTodoTask,
+    undo,
+    redo,
+} from './requestProcessor';
+import logger from './logger';
+import favicon from 'serve-favicon';
+import path from 'path';
+
+const app = express();
 
 app.use(favicon(path.join(__dirname, '../', '/dist/favicon.ico')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -67,19 +80,15 @@ app.post('/register', function (req, res, next) {
         res.statusCode = 401;
         res.end('Incorrect Login or Password');
     } else {
-        processRequests.getUser(req.body.login, (err, user) => {
+        getUser(req.body.login, (err, user) => {
             if (user) {
                 res.statusCode = 401;
                 res.statusMessage = 'User is alredy exists';
                 res.end();
             } else {
-                processRequests.createUser(
-                    req.body.login,
-                    req.body.password,
-                    () => {
-                        login(req, res, next);
-                    }
-                );
+                createUser(req.body.login, req.body.password, () => {
+                    login(req, res, next);
+                });
             }
         });
     }
@@ -113,13 +122,13 @@ app.use('/api/users/:username*', function (req, res, next) {
 
 app.get('/api/users/:username/get-todolist', function (req, res) {
     logger.info(`received request for user: ${req.params.username}`);
-    processRequests.getUser(req.params.username, (err, user) => {
+    getUser(req.params.username, (err, user) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('User Not Found');
         } else {
-            processRequests.getTodoList(user.todoListId, (err, todoList) => {
+            getTodoList(user.todoListId, (err, todoList) => {
                 if (err) {
                     logger.error(err);
                     res.statusCode = 404;
@@ -150,13 +159,13 @@ app.use('/api/todolists/:todoListId*', function (req, res, next) {
 });
 
 app.post('/api/todolists/:todoListId/add-category', function (req, res) {
-    processRequests.getTodoList(req.params.todoListId, (err, todoList) => {
+    getTodoList(req.params.todoListId, (err, todoList) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('TodoList Not Found');
         } else {
-            processRequests.addCategory(todoList, req.body);
+            addCategory(todoList, req.body);
             res.statusCode = 200;
             res.end();
         }
@@ -164,13 +173,13 @@ app.post('/api/todolists/:todoListId/add-category', function (req, res) {
 });
 
 app.post('/api/todolists/:todoListId/delete-category', function (req, res) {
-    processRequests.getTodoList(req.params.todoListId, (err, todoList) => {
+    getTodoList(req.params.todoListId, (err, todoList) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('TodoList Not Found');
         } else {
-            processRequests.deleteCategory(todoList, req.body);
+            deleteCategory(todoList, req.body);
             res.statusCode = 200;
             res.end();
         }
@@ -178,13 +187,13 @@ app.post('/api/todolists/:todoListId/delete-category', function (req, res) {
 });
 
 app.post('/api/todolists/:todoListId/rename-category', function (req, res) {
-    processRequests.getTodoList(req.params.todoListId, (err, todoList) => {
+    getTodoList(req.params.todoListId, (err, todoList) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('TodoList Not Found');
         } else {
-            processRequests.renameCategory(todoList, req.body);
+            renameCategory(todoList, req.body);
             res.statusCode = 200;
             res.end();
         }
@@ -192,13 +201,13 @@ app.post('/api/todolists/:todoListId/rename-category', function (req, res) {
 });
 
 app.post('/api/todolists/:todoListId/add-todotask', function (req, res) {
-    processRequests.getTodoList(req.params.todoListId, (err, todoList) => {
+    getTodoList(req.params.todoListId, (err, todoList) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('TodoList Not Found');
         } else {
-            processRequests.addTodoTask(todoList, req.body);
+            addTodoTask(todoList, req.body);
             res.statusCode = 200;
             res.end();
         }
@@ -206,13 +215,13 @@ app.post('/api/todolists/:todoListId/add-todotask', function (req, res) {
 });
 
 app.post('/api/todolists/:todoListId/edit-todotask', function (req, res) {
-    processRequests.getTodoList(req.params.todoListId, (err, todoList) => {
+    getTodoList(req.params.todoListId, (err, todoList) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('TodoList Not Found');
         } else {
-            processRequests.editTodoTask(todoList, req.body);
+            editTodoTask(todoList, req.body);
 
             res.statusCode = 200;
             res.end();
@@ -221,13 +230,13 @@ app.post('/api/todolists/:todoListId/edit-todotask', function (req, res) {
 });
 
 app.post('/api/todolists/:todoListId/move-todotask', function (req, res) {
-    processRequests.getTodoList(req.params.todoListId, (err, todoList) => {
+    getTodoList(req.params.todoListId, (err, todoList) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('TodoList Not Found');
         } else {
-            processRequests.moveTodoTask(todoList, req.body);
+            moveTodoTask(todoList, req.body);
             res.statusCode = 200;
             res.end();
         }
@@ -235,13 +244,13 @@ app.post('/api/todolists/:todoListId/move-todotask', function (req, res) {
 });
 
 app.post('/api/todolists/:todoListId/undo', function (req, res) {
-    processRequests.getTodoList(req.params.todoListId, (err, todoList) => {
+    getTodoList(req.params.todoListId, (err, todoList) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('TodoList Not Found');
         } else {
-            processRequests.undo(todoList, req.body);
+            undo(todoList, req.body);
             res.statusCode = 200;
             res.end();
         }
@@ -249,13 +258,13 @@ app.post('/api/todolists/:todoListId/undo', function (req, res) {
 });
 
 app.post('/api/todolists/:todoListId/redo', function (req, res) {
-    processRequests.getTodoList(req.params.todoListId, (err, todoList) => {
+    getTodoList(req.params.todoListId, (err, todoList) => {
         if (err) {
             logger.error(err);
             res.statusCode = 404;
             res.end('TodoList Not Found');
         } else {
-            processRequests.redo(todoList, req.body);
+            redo(todoList, req.body);
             res.statusCode = 200;
             res.end();
         }
@@ -267,4 +276,4 @@ app.get('/logout', function (req, res) {
     res.redirect('/');
 });
 
-module.exports = app;
+export default app;

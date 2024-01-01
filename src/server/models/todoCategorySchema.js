@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
 
-const TodoCategorySchema = new Schema({
+const TodoCategorySchema = new mongoose.Schema({
     id: {
         type: String,
         required: true,
@@ -35,4 +34,4 @@ const TodoCategorySchema = new Schema({
 });
 TodoCategorySchema.set('autoIndex', false);
 
-module.exports = TodoCategorySchema;
+export default TodoCategorySchema;

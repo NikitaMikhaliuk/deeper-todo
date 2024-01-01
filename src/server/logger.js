@@ -1,4 +1,4 @@
-const winston = require('winston');
+import winston from 'winston';
 
 const logger = new winston.Logger({
     transports: [
@@ -21,4 +21,4 @@ logger.on('error', (error) => {
     console.log('Unable to write log entry', error);
 });
 
-module.exports = logger;
+export default logger;

@@ -1,7 +1,7 @@
-const User = require('./models/UserModel');
-const TodoList = require('./models/TodoListModel');
+import User from './models/UserModel.js';
+import TodoList from './models/TodoListModel.js';
 
-exports.getUser = function (username, callback) {
+export function getUser(username, callback) {
     User.findOne({ username }, function (err, user) {
         if (err) {
             callback(err);
@@ -9,9 +9,9 @@ exports.getUser = function (username, callback) {
             callback(null, user);
         }
     });
-};
+}
 
-exports.createUser = function (username, password, callback) {
+export function createUser(username, password, callback) {
     const todolist = new TodoList({
         root: {
             parentCategoryId: '',
@@ -31,9 +31,9 @@ exports.createUser = function (username, password, callback) {
         });
         callback();
     });
-};
+}
 
-exports.getTodoList = function (id, callback) {
+export function getTodoList(id, callback) {
     TodoList.findById(id, function (err, todoList) {
         if (err) {
             callback(err);
@@ -41,7 +41,7 @@ exports.getTodoList = function (id, callback) {
             callback(null, todoList);
         }
     });
-};
+}
 
 function saveTodoList(todolist) {
     todolist.save(function (err) {
@@ -52,42 +52,42 @@ function saveTodoList(todolist) {
     });
 }
 
-exports.addCategory = function (todolist, params) {
+export function addCategory(todolist, params) {
     todolist.addCategory(params.todoCat);
     saveTodoList(todolist);
-};
+}
 
-exports.deleteCategory = function (todolist, params) {
+export function deleteCategory(todolist, params) {
     todolist.deleteCategory(params.id);
     saveTodoList(todolist);
-};
+}
 
-exports.renameCategory = function (todolist, params) {
+export function renameCategory(todolist, params) {
     todolist.renameCategory(params);
     saveTodoList(todolist);
-};
+}
 
-exports.addTodoTask = function (todolist, params) {
+export function addTodoTask(todolist, params) {
     todolist.addTodoitem(params);
     saveTodoList(todolist);
-};
+}
 
-exports.editTodoTask = function (todolist, params) {
+export function editTodoTask(todolist, params) {
     todolist.editTodoItem(params);
     saveTodoList(todolist);
-};
+}
 
-exports.moveTodoTask = function (todolist, params) {
+export function moveTodoTask(todolist, params) {
     todolist.moveTodoItem(params);
     saveTodoList(todolist);
-};
+}
 
-exports.undo = function (todolist, params) {
-    todolist.updateTodolist(params);
+export function undo(todolist, params) {
+    todolist.updateTodoList(params);
     saveTodoList(todolist);
-};
+}
 
-exports.redo = function (todolist, params) {
-    todolist.updateTodolist(params);
+export function redo(todolist, params) {
+    todolist.updateTodoList(params);
     saveTodoList(todolist);
-};
+}

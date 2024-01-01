@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
 
-const TodoTaskSchema = new Schema({
+const TodoTaskSchema = new mongoose.Schema({
     id: {
         type: String,
         required: true,
@@ -28,4 +27,4 @@ const TodoTaskSchema = new Schema({
 });
 TodoTaskSchema.set('autoIndex', false);
 
-module.exports = TodoTaskSchema;
+export default TodoTaskSchema;

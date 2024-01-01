@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const TodoCategorySchema = require('./TodoCategorySchema.js');
-const TodoTaskSchema = require('./TodoTaskSchema.js');
-const getDBConnection = require('../getdbconnection.js');
+import mongoose from 'mongoose';
+import TodoCategorySchema from './TodoCategorySchema.js';
+import TodoTaskSchema from './TodoTaskSchema.js';
+import getDBConnection from '../getdbconnection.js';
 
-const TodoListSchema = new Schema(
+const TodoListSchema = new mongoose.Schema(
     {
         totalProgress: {
             type: Number,
@@ -184,7 +183,7 @@ TodoListSchema.methods.moveTodoItem = function (params) {
     this.updateTotalProgress();
 };
 
-TodoListSchema.methods.updateTodolist = function (params) {
+TodoListSchema.methods.updateTodoList = function (params) {
     this.root = params.root;
     this.categoriesStorage = params.categoriesStorage;
     this.itemsStorage = params.itemsStorage;
@@ -192,6 +191,6 @@ TodoListSchema.methods.updateTodolist = function (params) {
 };
 
 TodoListSchema.set('autoIndex', false);
-const Todolist = getDBConnection('Todolist', TodoListSchema);
+const TodoList = getDBConnection('TodoList', TodoListSchema);
 
-module.exports = Todolist;
+export default TodoList;
