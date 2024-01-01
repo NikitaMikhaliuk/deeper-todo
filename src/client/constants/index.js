@@ -1,0 +1,12 @@
+export const ADD_CATEGORY = 'ADD_CATEGORY';
+export const RENAME_CATEGORY = 'RENAME_CATEGORY';
+export const DELETE_CATEGORY = 'DELETE_CATEGORY';
+export const CHOSE_CATEGORY = 'CHOSE_CATEGORY';
+export const ADD_TODO_ITEM = 'ADD_TODO_ITEM';
+export const EDIT_TODO_ITEM = 'EDIT_TODO_ITEM';
+export const CHOSE_TODO_ITEM_TO_EDIT = 'CHOSE_TODO_ITEM_TO_EDIT';
+export const MOVE_TODO_ITEM = 'MOVE_TODO_ITEM';
+export const APPLY_FILTER = 'APPLY_FILTER';
+export const TOGGLE_SHOW_COMPLETED = 'TOGGLE_SHOW_COMPLETED';
+export const UNDO = 'UNDO';
+export const REDO = 'REDO';
