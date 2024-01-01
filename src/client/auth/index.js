@@ -1,6 +1,4 @@
 import './index.css';
-// import 'babel-polyfill';
-// import 'whatwg-fetch';
 
 function handleLoginSwitchButton(evt) {
     document.forms['auth'].action = '/login';

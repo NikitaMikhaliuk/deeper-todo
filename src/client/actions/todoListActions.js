@@ -1,5 +1,4 @@
 import * as constants from '../constants';
-import 'whatwg-fetch';
 
 export function AddCategory(parentCategoryId, name, id, linkPath) {
     return (dispatch, getState) => {
