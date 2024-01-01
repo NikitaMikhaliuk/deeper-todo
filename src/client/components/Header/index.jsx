@@ -12,7 +12,7 @@ import Undo from 'material-ui/svg-icons/content/undo';
 import Redo from 'material-ui/svg-icons/content/redo';
 import List from 'material-ui/svg-icons/action/list';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
-import HeaderIconButton from './HeaderIconButton.js';
+import HeaderIconButton from './HeaderIconButton.jsx';
 import './index.css';
 
 export default class Header extends Component {

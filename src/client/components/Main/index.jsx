@@ -3,9 +3,8 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
-import TodoItemsList from '../TodoItemsList/index.js';
-import TodoItemEditForm from '../TodoItemEditForm/index.js';
-import uid from 'uid';
+import TodoItemsList from '../TodoItemsList/index.jsx';
+import TodoItemEditForm from '../TodoItemEditForm/index.jsx';
 import './index.css';
 
 export default class Main extends Component {
@@ -25,7 +24,7 @@ export default class Main extends Component {
     handleSubmitAddItem = () => {
         if (this.state.addItemValue) {
             this.props.actions.AddTodoItem(
-                uid(),
+                crypto.randomUUID(),
                 this.state.addItemValue,
                 this.props.chosenCategoryId
             );

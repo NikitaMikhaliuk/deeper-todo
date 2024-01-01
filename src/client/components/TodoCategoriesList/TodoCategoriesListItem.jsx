@@ -4,11 +4,10 @@ import { ListItem } from 'material-ui/List';
 import { grey400 } from 'material-ui/styles/colors';
 import SubdirectoryArrowRight from 'material-ui/svg-icons/navigation/subdirectory-arrow-right';
 import IconButton from 'material-ui/IconButton';
-import OptionsMenu from './OptionsMenu.js';
-import MyInputForm from '../MyInputForm/index.js';
-import DeleteItemModalDialog from '../DeleteItemModalDialog/index.js';
-import uid from 'uid';
-import { nameToUrl } from '../../utils/url-name-transforms';
+import OptionsMenu from './OptionsMenu.jsx';
+import MyInputForm from '../MyInputForm/index.jsx';
+import DeleteItemModalDialog from '../DeleteItemModalDialog/index.jsx';
+import { nameToUrl } from '../../utils/url-name-transforms.js';
 
 const styles = {
     todoCategoryLink: {
@@ -65,7 +64,12 @@ export default class TodoCategoriesListItem extends Component {
     handleSubmitAddNestedCat = (catName) => {
         const linkPath =
             this.props.todoCategoryItem.linkPath + nameToUrl(catName);
-        this.props.actions.AddCategory(this.props.id, catName, uid(), linkPath);
+        this.props.actions.AddCategory(
+            this.props.id,
+            catName,
+            crypto.randomUUID(),
+            linkPath
+        );
         this.setState({
             showAddNestedCatForm: false,
         });

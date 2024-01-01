@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { List } from 'material-ui/List';
 
-import TodoListItem from './TodoListItem.js';
+import TodoListItem from './TodoListItem.jsx';
 
 export default class TodoItemsList extends Component {
     render() {

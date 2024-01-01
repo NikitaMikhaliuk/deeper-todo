@@ -1,29 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
 import './index.css';
-import 'react-hot-loader/patch';
-import 'babel-polyfill';
-import 'webpack-hot-middleware/client';
-import App from './App';
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import configureStore from './store/configureStore';
-import { AppContainer } from 'react-hot-loader';
 import { fromJS } from 'immutable';
 
-let initialState;
-let store;
+import App from './App';
 
-const render = (Component) => {
-    ReactDOM.render(
-        <AppContainer>
+let initialState;
+
+const render = (Component: React.FC, store: any) => {
+    ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+        <React.StrictMode>
             <Provider store={store}>
                 <Router>
                     <Component />
                 </Router>
             </Provider>
-        </AppContainer>,
-        document.getElementById('root')
+        </React.StrictMode>
     );
 };
 const username = window.location.pathname.split('/')[2];
@@ -39,12 +35,12 @@ xhr.onreadystatechange = function () {
     }
     const todoList = JSON.parse(this.responseText);
 
-    let normalizedCatStorage = {};
-    let normalizedItemsStorage = {};
-    for (let item of todoList.itemsStorage) {
+    const normalizedCatStorage = {};
+    const normalizedItemsStorage = {};
+    for (const item of todoList.itemsStorage) {
         normalizedItemsStorage[item.id] = item;
     }
-    for (let cat of todoList.categoriesStorage) {
+    for (const cat of todoList.categoriesStorage) {
         normalizedCatStorage[cat.id] = cat;
     }
     const normalizedTodoList = {
@@ -52,7 +48,6 @@ xhr.onreadystatechange = function () {
         categoriesStorage: normalizedCatStorage,
         itemsStorage: normalizedItemsStorage,
     };
-    console.log(normalizedTodoList);
     initialState = {
         todoList: fromJS(normalizedTodoList),
         appView: fromJS({
@@ -62,12 +57,8 @@ xhr.onreadystatechange = function () {
             filter: '',
         }),
     };
-    store = configureStore(initialState);
-    render(App);
+    const store = configureStore(initialState);
+    render(App, store);
 };
 
-if (module.hot) {
-    module.hot.accept('./App', () => {
-        render(App);
-    });
-}
+// render(App);

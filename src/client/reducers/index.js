@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import todoList from './todoList.js';
-import appView from './appView.js';
+import todoList from './todoList';
+import appView from './appView';
 
 export default combineReducers({
     todoList,

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Checkbox from 'material-ui/Checkbox';
 import IconButton from 'material-ui/IconButton';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
-import { nameToUrl } from '../../utils/url-name-transforms';
+import { nameToUrl } from '../../utils/url-name-transforms.js';
 
 export default class TodoListItem extends Component {
     handleListItemSelect = () => {

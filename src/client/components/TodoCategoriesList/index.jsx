@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { List, makeSelectable } from 'material-ui/List';
-import TodoCategoriesListItem from './TodoCategoriesListItem.js';
+import TodoCategoriesListItem from './TodoCategoriesListItem.jsx';
 
 let SelectableList = makeSelectable(List);
 

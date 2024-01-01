@@ -1,4 +1,4 @@
-import * as appViewActions from './appViewActions.js';
-import * as todoListActions from './todoListActions.js';
+import * as appViewActions from './appViewActions';
+import * as todoListActions from './todoListActions';
 
 export default { ...todoListActions, ...appViewActions };

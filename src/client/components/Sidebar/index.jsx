@@ -3,9 +3,8 @@ import { Route } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
-import TodoCategoriesList from '../TodoCategoriesList/index.js';
-import uid from 'uid';
-import { nameToUrl } from '../../utils/url-name-transforms';
+import TodoCategoriesList from '../TodoCategoriesList/index.jsx';
+import { nameToUrl } from '../../utils/url-name-transforms.js';
 import './index.css';
 
 export default class Sidebar extends Component {
@@ -29,7 +28,7 @@ export default class Sidebar extends Component {
             this.props.actions.AddCategory(
                 'root',
                 this.state.addCategoryValue,
-                uid(8),
+                crypto.randomUUID(),
                 linkPath
             );
             this.setState({
