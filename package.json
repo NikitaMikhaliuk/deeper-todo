@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon -e js,ts,json -w ./src/server -x tsx --env-file=.env src/server/main.ts",
     "start": "tsx --env-file=.env.production src/server/main.ts",
-    "build": "vite build"
+    "build": "vite build",
+    "lock": "npm i --package-lock-only"
   },
   "author": "NikitaMikhaliuk",
   "license": "MIT",
