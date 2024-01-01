@@ -16,12 +16,9 @@ import {
     redo,
 } from './requestProcessor';
 import logger from './logger';
-import favicon from 'serve-favicon';
-import path from 'path';
 
 const app = express();
 
-app.use(favicon(path.join(__dirname, '../', '/dist/favicon.ico')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(
@@ -94,9 +91,9 @@ app.post('/register', function (req, res, next) {
     }
 });
 
-app.get('/app/:username*', function (req, res) {
+app.get('/app/:username*', function (req, res, next) {
     if (req.isAuthenticated() && req.user.username === req.params.username) {
-        res.sendFile(path.join(__dirname, '../', '/dist/index.html'));
+        next();
     } else {
         res.redirect('/');
     }
@@ -106,7 +103,7 @@ app.get('/', function (req, res) {
     if (req.isAuthenticated()) {
         res.redirect('/app/' + req.user.username);
     } else {
-        res.sendFile(path.join(__dirname, '../', '/dist/authentication.html'));
+        res.redirect('/auth/');
     }
 });
 
