@@ -12,14 +12,17 @@ import { Route, withRouter } from 'react-router-dom';
 import actionCreators from './actions';
 import todoListReducer from './reducers/todoList';
 import appViewReducer from './reducers/appView';
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { fromJS } from 'immutable';
 
 function reducer(state, action) {
     if (action.type === 'INITIAL_UPLOAD') {
-        return { ...state, ...action.payload };
+        return { ...action.payload };
     }
-    return todoListReducer(appViewReducer(state, action), action);
+
+    const todoList = todoListReducer(state.todoList, action);
+    const appView = appViewReducer(state.appView, action);
+    return { todoList, appView };
 }
 
 interface State {
@@ -53,6 +56,9 @@ function AppComponent({ location }: any) {
         }),
         todoList: fromJS(null),
     });
+
+    const stateRef = useRef(state);
+    stateRef.current = state;
 
     useEffect(() => {
         const username = window.location.pathname.split('/')[2];
@@ -106,8 +112,15 @@ function AppComponent({ location }: any) {
     } = mapState(state);
 
     const actions = {};
-    for (const [actionName, action] of Object.entries(actionCreators)) {
-        actions[actionName] = (...args) => dispatch(action(...args));
+    for (const [actionName, actionCreator] of Object.entries(actionCreators)) {
+        actions[actionName] = (...args) => {
+            const action = actionCreator(...args);
+            if (action.type) {
+                dispatch(action);
+            } else if (typeof action === 'function') {
+                action(dispatch, () => stateRef.current);
+            }
+        };
     }
     if (!todoList) {
         return <div>Loading</div>;
