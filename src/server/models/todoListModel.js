@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const todoCategorySchema = require('./todoCategorySchema');
-const TodoTaskSchema = require('./todoTaskSchema');
-const getDBConnection = require('../getdbconnection');
+const TodoCategorySchema = require('./TodoCategorySchema.js');
+const TodoTaskSchema = require('./TodoTaskSchema.js');
+const getDBConnection = require('../getdbconnection.js');
 
 const TodoListSchema = new Schema(
     {
@@ -18,7 +18,7 @@ const TodoListSchema = new Schema(
             },
             categoriesIds: [String],
         },
-        categoriesStorage: [todoCategorySchema],
+        categoriesStorage: [TodoCategorySchema],
         itemsStorage: [TodoTaskSchema],
     },
     { minimize: false }

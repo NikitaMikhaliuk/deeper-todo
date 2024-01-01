@@ -1,5 +1,5 @@
-const User = require('./models/userModel');
-const Todolist = require('./models/todoListModel');
+const User = require('./models/UserModel');
+const TodoList = require('./models/TodoListModel');
 
 exports.getUser = function (username, callback) {
     User.findOne({ username }, function (err, user) {
@@ -12,7 +12,7 @@ exports.getUser = function (username, callback) {
 };
 
 exports.createUser = function (username, password, callback) {
-    const todolist = new Todolist({
+    const todolist = new TodoList({
         root: {
             parentCategoryId: '',
             linkPath: '/app/' + username + '/categories',
@@ -34,7 +34,7 @@ exports.createUser = function (username, password, callback) {
 };
 
 exports.getTodoList = function (id, callback) {
-    Todolist.findById(id, function (err, todoList) {
+    TodoList.findById(id, function (err, todoList) {
         if (err) {
             callback(err);
         } else {

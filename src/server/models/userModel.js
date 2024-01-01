@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
-const getDBConnection = require('../getdbconnection');
+const getDBConnection = require('../getdbconnection.js');
 const UserSchema = Schema(
     {
         username: {
