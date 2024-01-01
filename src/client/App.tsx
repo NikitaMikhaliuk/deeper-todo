@@ -143,13 +143,11 @@ function AppComponent({ location }: any) {
                         <Header
                             {...props}
                             actions={actions}
-                            filter={filter}
                             currentLinkPath={
                                 chosenCategory
                                     ? chosenCategory.linkPath
                                     : location.pathname
                             }
-                            showCompleted={showCompleted}
                             progress={todoList.totalProgress}
                             undoDisabled={!todoList.prevState}
                             redoDisabled={!todoList.nextState}
