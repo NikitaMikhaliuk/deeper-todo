@@ -6,47 +6,47 @@ import Clear from 'material-ui/svg-icons/content/clear';
 import './index.css';
 
 export default class MyInputForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inputValue: this.props.defaultValue
-    };
-  }
-
-  handleInputChange = (evt) => {
-    this.setState({
-      inputValue: evt.target.value
-    });
-  }
-
-  handleSubmit = () => {
-    if (this.state.inputValue) {
-      this.props.handleSubmit(this.state.inputValue);
+    constructor(props) {
+        super(props);
+        this.state = {
+            inputValue: this.props.defaultValue,
+        };
     }
-    
-  }
 
-  handleCancel = () => {
-    this.props.handleCancel();
-  }
+    handleInputChange = (evt) => {
+        this.setState({
+            inputValue: evt.target.value,
+        });
+    };
 
-  render() {
-    return (
-      <div className='b-catname-input-form'>
-        <TextField
-          autoFocus
-          type='text'         
-          underlineShow={true}
-          id={this.props.id}
-          value={this.state.inputValue}
-          onChange={this.handleInputChange} />
-        <IconButton onClick={this.handleSubmit}>
-          <Done color='green' />
-        </IconButton>
-        <IconButton onClick={this.handleCancel}>
-          <Clear color='red' />
-        </IconButton>
-      </div>
-    )
-  }
+    handleSubmit = () => {
+        if (this.state.inputValue) {
+            this.props.handleSubmit(this.state.inputValue);
+        }
+    };
+
+    handleCancel = () => {
+        this.props.handleCancel();
+    };
+
+    render() {
+        return (
+            <div className='b-catname-input-form'>
+                <TextField
+                    autoFocus
+                    type='text'
+                    underlineShow={true}
+                    id={this.props.id}
+                    value={this.state.inputValue}
+                    onChange={this.handleInputChange}
+                />
+                <IconButton onClick={this.handleSubmit}>
+                    <Done color='green' />
+                </IconButton>
+                <IconButton onClick={this.handleCancel}>
+                    <Clear color='red' />
+                </IconButton>
+            </div>
+        );
+    }
 }
