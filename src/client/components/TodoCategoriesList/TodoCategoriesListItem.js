@@ -4,9 +4,9 @@ import { ListItem } from 'material-ui/List';
 import { grey400 } from 'material-ui/styles/colors';
 import SubdirectoryArrowRight from 'material-ui/svg-icons/navigation/subdirectory-arrow-right';
 import IconButton from 'material-ui/IconButton';
-import OptionsMenu from './OptionsMenu';
-import MyInputForm from '../MyInputForm';
-import DeleteItemModalDialog from '../DeleteItemModalDialog';
+import OptionsMenu from './OptionsMenu.js';
+import MyInputForm from '../MyInputForm/index.js';
+import DeleteItemModalDialog from '../DeleteItemModalDialog/index.js';
 import uid from 'uid';
 import { nameToUrl } from '../../utils/url-name-transforms';
 

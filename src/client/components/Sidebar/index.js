@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
-import TodoCategoriesList from '../TodoCategoriesList';
+import TodoCategoriesList from '../TodoCategoriesList/index.js';
 import uid from 'uid';
 import { nameToUrl } from '../../utils/url-name-transforms';
 import './index.css';

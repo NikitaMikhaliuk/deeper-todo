@@ -3,8 +3,8 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
-import TodoItemsList from '../TodoItemsList';
-import TodoItemEditForm from '../TodoItemEditForm';
+import TodoItemsList from '../TodoItemsList/index.js';
+import TodoItemEditForm from '../TodoItemEditForm/index.js';
 import uid from 'uid';
 import './index.css';
 
