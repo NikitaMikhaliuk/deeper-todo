@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { List } from 'material-ui/List';
 
 import TodoListItem from './TodoListItem';
 
 export default class TodoItemsList extends Component {
-    static propTypes = {
-        children: PropTypes.arrayOf(PropTypes.node),
-    };
-
     render() {
         const {
             itemsStorage,

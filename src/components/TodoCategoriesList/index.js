@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { List, makeSelectable } from 'material-ui/List';
 import TodoCategoriesListItem from './TodoCategoriesListItem';
 
 let SelectableList = makeSelectable(List);
 
 export default class TodoCategoriesList extends Component {
-    static propTypes = {
-        children: PropTypes.arrayOf(PropTypes.node),
-    };
-
     constructor(props) {
         super(props);
         this.state = {
