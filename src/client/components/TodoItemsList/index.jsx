@@ -17,7 +17,7 @@ export default function TodoItemsList({
     const renderTodoList = (todoItemId) => {
         return (
             <TodoListItem
-                value={todoItemId}
+                value={todoItemId} // isn't used by component, can be deleted?
                 key={todoItemId}
                 todoItem={itemsStorage[todoItemId]}
                 id={todoItemId}

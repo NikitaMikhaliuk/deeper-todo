@@ -25,7 +25,7 @@ export default class TodoCategoriesList extends Component {
                 return (
                     <TodoCategoriesListItem
                         key={todoCatId}
-                        value={todoCatId}
+                        value={todoCatId} // isn't used by component, can be deleted?
                         id={todoCatId}
                         selectedIndex={this.state.selectedIndex}
                         todoCategoryItem={categoriesStorage[todoCatId]}
@@ -45,7 +45,7 @@ export default class TodoCategoriesList extends Component {
         return (
             <SelectableList
                 value={this.state.selectedIndex}
-                onChange={this.handleRequestChange}
+                onChange={this.handleRequestChange} // don't do anything, can be deleted?
             >
                 {renderTodoCategories(root.categoriesIds)}
             </SelectableList>
