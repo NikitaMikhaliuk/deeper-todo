@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import { useState } from 'react';
 import Checkbox from 'material-ui/Checkbox';
 import { Link } from 'react-router-dom';
 import TextField from 'material-ui/TextField';
