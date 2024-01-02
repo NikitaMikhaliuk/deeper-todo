@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ListItem } from 'material-ui/List';
 import { grey400 } from 'material-ui/styles/colors';
@@ -21,205 +21,156 @@ const styles = {
     },
 };
 
-export default class TodoCategoriesListItem extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isEditing: false,
-            showAddNestedCatForm: false,
-            showDeleteModalDialog: false,
-        };
+export default function TodoCategoriesListItem({
+    actions,
+    chosenCategoryId,
+    chosenItemToEditId,
+    filter,
+    id,
+    renderNestedList,
+    todoCategoryItem,
+}) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [showAddNestedCatForm, setShowAddNestedCatForm] = useState(false);
+    const [showDeleteModalDialog, setShowDeleteModalDialog] = useState(false);
+
+    function handleListItemSelect() {
+        actions.ChoseCategory(id);
     }
-    handleListItemSelect = () => {
-        const { id } = this.props;
-        this.props.handleRequestChange(id);
-        this.props.actions.ChoseCategory(id);
-    };
 
-    handleRenameCat = () => {
-        this.setState({
-            isEditing: true,
-        });
-    };
+    function handleRenameCat() {
+        setIsEditing(true);
+    }
 
-    handleCancelRename = () => {
-        this.setState({
-            isEditing: false,
-        });
-    };
+    function handleCancelRename() {
+        setIsEditing(false);
+    }
 
-    handleSubmitRename = (newName) => {
-        this.props.actions.RenameCategory(this.props.id, newName);
-        this.setState({
-            isEditing: false,
-        });
-    };
+    function handleSubmitRename(newName) {
+        actions.RenameCategory(id, newName);
+        setIsEditing(false);
+    }
 
-    handleAddNestedCat = () => {
-        this.setState({
-            showAddNestedCatForm: true,
-        });
-    };
+    function handleAddNestedCat() {
+        setShowAddNestedCatForm(true);
+    }
 
-    handleSubmitAddNestedCat = (catName) => {
-        const linkPath =
-            this.props.todoCategoryItem.linkPath + nameToUrl(catName);
-        this.props.actions.AddCategory(
-            this.props.id,
-            catName,
-            crypto.randomUUID(),
-            linkPath
-        );
-        this.setState({
-            showAddNestedCatForm: false,
-        });
-    };
+    function handleSubmitAddNestedCat(catName) {
+        const linkPath = todoCategoryItem.linkPath + nameToUrl(catName);
+        actions.AddCategory(id, catName, crypto.randomUUID(), linkPath);
+        setShowAddNestedCatForm(false);
+    }
 
-    handleCancelAddNestedCat = () => {
-        this.setState({
-            showAddNestedCatForm: false,
-        });
-    };
+    function handleCancelAddNestedCat() {
+        setShowAddNestedCatForm(false);
+    }
 
-    handleDeleteCat = () => {
-        this.setState({
-            showDeleteModalDialog: true,
-        });
-    };
+    function handleDeleteCat() {
+        setShowDeleteModalDialog(true);
+    }
 
-    handleSubmitDelete = () => {
-        const { id, todoCategoryItem } = this.props;
-        this.props.actions.DeleteCategory(
-            todoCategoryItem.parentCategoryId,
-            id
-        );
-        this.setState({
-            showDeleteModalDialog: false,
-        });
-    };
+    function handleSubmitDelete() {
+        actions.DeleteCategory(todoCategoryItem.parentCategoryId, id);
+        setShowDeleteModalDialog(false);
+    }
 
-    handleCancelDelete = () => {
-        this.setState({
-            showDeleteModalDialog: false,
-        });
-    };
+    function handleCancelDelete() {
+        setShowDeleteModalDialog(false);
+    }
 
-    handleMoveItemInCategory = () => {
-        this.props.actions.MoveTodoItem(
-            this.props.chosenItemToEditId,
-            this.props.id
-        );
-    };
+    function handleMoveItemInCategory() {
+        actions.MoveTodoItem(chosenItemToEditId, id);
+    }
 
-    render() {
-        const {
-            todoCategoryItem,
-            renderNestedList,
-            selectedIndex,
-            id,
-            chosenItemToEditId,
-        } = this.props;
-        const isSelected = selectedIndex === id;
-        const {
-            handleRenameCat,
-            handleAddNestedCat,
-            handleDeleteCat,
-            handleSubmitDelete,
-            handleCancelDelete,
-        } = this;
-        const { showDeleteModalDialog, isEditing, showAddNestedCatForm } =
-            this.state;
-        const childToRender = isEditing ? (
-            <MyInputForm
-                key={id + 'RenameInput'}
-                id={`${id}_RenameInput`}
-                defaultValue={todoCategoryItem.name}
-                handleSubmit={this.handleSubmitRename}
-                handleCancel={this.handleCancelRename}
-            />
-        ) : (
-            <Link
-                onClick={this.handleListItemSelect}
-                style={styles.todoCategoryLink}
-                key={id + '_Link'}
-                to={
-                    todoCategoryItem.linkPath +
-                    (this.props.filter ? `&filter=${this.props.filter}` : '')
-                }
+    const childToRender = isEditing ? (
+        <MyInputForm
+            key={id + 'RenameInput'}
+            id={`${id}_RenameInput`}
+            defaultValue={todoCategoryItem.name}
+            handleSubmit={handleSubmitRename}
+            handleCancel={handleCancelRename}
+        />
+    ) : (
+        <Link
+            onClick={handleListItemSelect}
+            style={styles.todoCategoryLink}
+            key={id + '_Link'}
+            to={todoCategoryItem.linkPath + (filter ? `&filter=${filter}` : '')}
+        >
+            {todoCategoryItem.name}
+        </Link>
+    );
+    
+    const isSelected = chosenCategoryId === id;
+    const nestedArr = renderNestedList(todoCategoryItem.categoriesIds);
+    const nestedItemsToRender = showAddNestedCatForm
+        ? [
+              <ListItem
+                  value={id + '_AddNestedInput'}
+                  key={id + '_AddNestedInput'}
+                  id={id + '_AddNestedInput'}
+                  children={
+                      <MyInputForm
+                          key={id + '_AddNestedInput'}
+                          id={id + '_AddNestedInput'}
+                          defaultValue={''}
+                          handleSubmit={handleSubmitAddNestedCat}
+                          handleCancel={handleCancelAddNestedCat}
+                      />
+                  }
+                  innerDivStyle={{
+                      backgroundColor: isSelected ? grey400 : 'initial',
+                      paddingTop: '5px',
+                      paddingBottom: '5px',
+                  }}
+              />,
+          ].concat(nestedArr)
+        : nestedArr;
+    const leftIconToRender =
+        chosenItemToEditId &&
+        !todoCategoryItem.itemsIds.includes(chosenItemToEditId) ? (
+            <IconButton
+                style={{ margin: '0' }}
+                onClick={handleMoveItemInCategory}
+                tooltip='Move item'
+                tooltipPosition='bottom-right'
+                disabled={todoCategoryItem.completed}
             >
-                {todoCategoryItem.name}
-            </Link>
+                <SubdirectoryArrowRight />
+            </IconButton>
+        ) : (
+            OptionsMenu({
+                handleRenameCat,
+                handleAddNestedCat,
+                handleDeleteCat,
+                disabled: todoCategoryItem.completed,
+            })
         );
-        const nestedArr = renderNestedList(todoCategoryItem.categoriesIds);
-        const nestedItemsToRender = showAddNestedCatForm
-            ? [
-                  <ListItem
-                      value={id + '_AddNestedInput'}
-                      key={id + '_AddNestedInput'}
-                      id={id + '_AddNestedInput'}
-                      children={
-                          <MyInputForm
-                              key={id + '_AddNestedInput'}
-                              id={id + '_AddNestedInput'}
-                              defaultValue={''}
-                              handleSubmit={this.handleSubmitAddNestedCat}
-                              handleCancel={this.handleCancelAddNestedCat}
-                          />
-                      }
-                      innerDivStyle={{
-                          backgroundColor: isSelected ? grey400 : 'initial',
-                          paddingTop: '5px',
-                          paddingBottom: '5px',
-                      }}
-                  />,
-              ].concat(nestedArr)
-            : nestedArr;
-        const leftIconToRender =
-            chosenItemToEditId &&
-            !todoCategoryItem.itemsIds.includes(chosenItemToEditId) ? (
-                <IconButton
-                    style={{ margin: '0' }}
-                    onClick={this.handleMoveItemInCategory}
-                    tooltip='Move item'
-                    tooltipPosition='bottom-right'
-                    disabled={todoCategoryItem.completed}
-                >
-                    <SubdirectoryArrowRight />
-                </IconButton>
-            ) : (
-                OptionsMenu({
-                    handleRenameCat,
-                    handleAddNestedCat,
-                    handleDeleteCat,
-                    disabled: todoCategoryItem.completed,
-                })
-            );
-        return (
-            <ListItem
-                value={id}
-                key={id}
-                disabled={!todoCategoryItem.visible}
-                children={[
-                    childToRender,
-                    <DeleteItemModalDialog
-                        key={id + '_DeleteDialog'}
-                        handleSubmitDelete={handleSubmitDelete}
-                        handleCancelDelete={handleCancelDelete}
-                        show={showDeleteModalDialog}
-                        text='Delete this category and all nested items?'
-                    />,
-                ]}
-                leftIcon={leftIconToRender}
-                initiallyOpen={true}
-                primaryTogglesNestedList={false}
-                innerDivStyle={{
-                    backgroundColor: isSelected ? grey400 : 'initial',
-                    paddingTop: '5px',
-                    paddingBottom: '5px',
-                }}
-                nestedItems={nestedItemsToRender}
-                nestedListStyle={{ marginLeft: '10px' }}
-            />
-        );
-    }
+    return (
+        <ListItem
+            value={id}
+            key={id}
+            disabled={!todoCategoryItem.visible}
+            children={[
+                childToRender,
+                <DeleteItemModalDialog
+                    key={id + '_DeleteDialog'}
+                    handleSubmitDelete={handleSubmitDelete}
+                    handleCancelDelete={handleCancelDelete}
+                    show={showDeleteModalDialog}
+                    text='Delete this category and all nested items?'
+                />,
+            ]}
+            leftIcon={leftIconToRender}
+            initiallyOpen={true}
+            primaryTogglesNestedList={false}
+            innerDivStyle={{
+                backgroundColor: isSelected ? grey400 : 'initial',
+                paddingTop: '5px',
+                paddingBottom: '5px',
+            }}
+            nestedItems={nestedItemsToRender}
+            nestedListStyle={{ marginLeft: '10px' }}
+        />
+    );
 }

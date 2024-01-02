@@ -159,6 +159,7 @@ function AppComponent({ location }: any) {
                         render={() => (
                             <Sidebar
                                 actions={actions}
+                                chosenCategoryId={chosenCategoryId}
                                 chosenItemToEditId={chosenItemToEditId}
                                 root={todoList.root}
                                 categoriesStorage={todoList.categoriesStorage}

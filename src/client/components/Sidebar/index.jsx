@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { Route } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -7,77 +7,65 @@ import TodoCategoriesList from '../TodoCategoriesList/index.jsx';
 import { nameToUrl } from '../../utils/url-name-transforms.js';
 import './index.css';
 
-export default class Sidebar extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            addCategoryValue: '',
-        };
+export default function Sidebar({
+    actions,
+    root,
+    categoriesStorage,
+    chosenCategoryId,
+    chosenItemToEditId,
+    showCompleted,
+    filter,
+}) {
+    const [addCategory, setAddCategory] = useState('');
+
+    function handleAddCategoryInput(e) {
+        setAddCategory(e.target.value);
     }
 
-    handleAddCategoryInput = (e) => {
-        this.setState({
-            addCategoryValue: e.target.value,
-        });
-    };
-
-    submitCategoryAdd = () => {
-        if (this.state.addCategoryValue) {
-            const name = this.state.addCategoryValue;
-            const linkPath = this.props.root.linkPath + nameToUrl(name);
-            this.props.actions.AddCategory(
-                'root',
-                this.state.addCategoryValue,
-                crypto.randomUUID(),
-                linkPath
-            );
-            this.setState({
-                addCategoryValue: '',
-            });
+    function submitCategoryAdd() {
+        if (addCategory) {
+            const name = addCategory;
+            const linkPath = root.linkPath + nameToUrl(name);
+            actions.AddCategory('root', name, crypto.randomUUID(), linkPath);
+            setAddCategory('');
         }
-    };
-
-    render() {
-        return (
-            <aside className='b-aside'>
-                <Paper
-                    zDepth={1}
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                    }}
-                >
-                    <div className='b-aside__add-cat-input-form'>
-                        <TextField
-                            type='text'
-                            hintText='Enter Category Title'
-                            style={{ margin: '5px' }}
-                            id={'2'}
-                            value={this.state.addCategoryValue}
-                            onChange={this.handleAddCategoryInput}
-                        />
-                        <FlatButton
-                            label='Add'
-                            onClick={this.submitCategoryAdd}
-                        />
-                    </div>
-                    <Route
-                        render={(props) => (
-                            <TodoCategoriesList
-                                {...props}
-                                actions={this.props.actions}
-                                root={this.props.root}
-                                categoriesStorage={this.props.categoriesStorage}
-                                chosenItemToEditId={
-                                    this.props.chosenItemToEditId
-                                }
-                                showCompleted={this.props.showCompleted}
-                                filter={this.props.filter}
-                            />
-                        )}
-                    />
-                </Paper>
-            </aside>
-        );
     }
+
+    return (
+        <aside className='b-aside'>
+            <Paper
+                zDepth={1}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                }}
+            >
+                <div className='b-aside__add-cat-input-form'>
+                    <TextField
+                        type='text'
+                        hintText='Enter Category Title'
+                        style={{ margin: '5px' }}
+                        id={'2'}
+                        value={addCategory}
+                        onChange={handleAddCategoryInput}
+                    />
+                    <FlatButton label='Add' onClick={submitCategoryAdd} />
+                </div>
+                <Route
+                    render={(props) => (
+                        <TodoCategoriesList
+                            {...props}
+                            actions={actions}
+                            root={root}
+                            categoriesStorage={categoriesStorage}
+                            chosenCategoryId={chosenCategoryId}
+                            chosenItemToEditId={chosenItemToEditId}
+                            showCompleted={showCompleted}
+                            filter={filter}
+                        />
+                    )}
+                />
+            </Paper>
+        </aside>
+    );
 }

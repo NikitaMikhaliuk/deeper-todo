@@ -1,54 +1,56 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { List, makeSelectable } from 'material-ui/List';
 import TodoCategoriesListItem from './TodoCategoriesListItem.jsx';
 
 let SelectableList = makeSelectable(List);
 
-export default class TodoCategoriesList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedIndex: null,
-        };
+export default function TodoCategoriesList({
+    actions,
+    filter,
+    root,
+    categoriesStorage,
+    chosenCategoryId,
+    chosenItemToEditId,
+    showCompleted,
+}) {
+    // possibly needes for SelectableList logic, TODO: check if needed in latest Material UI
+    const [selectedId, setSelectedId] = useState(null);
+
+    // possibly needes for SelectableList logic, TODO: check if needed in latest Material UI
+    function handleSelectItem(value) {
+        setSelectedId(value);
     }
 
-    handleRequestChange = (value) => {
-        this.setState({
-            selectedIndex: value,
-        });
-    };
-
-    render() {
-        const { root, categoriesStorage, showCompleted } = this.props;
-        const renderTodoCategories = (todoCatsIds) => {
-            const renderCategoryItem = (todoCatId) => {
-                return (
-                    <TodoCategoriesListItem
-                        key={todoCatId}
-                        value={todoCatId} // isn't used by component, can be deleted?
-                        id={todoCatId}
-                        selectedIndex={this.state.selectedIndex}
-                        todoCategoryItem={categoriesStorage[todoCatId]}
-                        renderNestedList={renderTodoCategories}
-                        handleRequestChange={this.handleRequestChange}
-                        actions={this.props.actions}
-                        chosenItemToEditId={this.props.chosenItemToEditId}
-                        filter={this.props.filter}
-                    />
-                );
-            };
-            const categoriesToRender = todoCatsIds.filter(
-                (catId) => showCompleted || categoriesStorage[catId].visible
+    // TODO: After Redux Toolkit integration,
+    // move to separate TodoCategoriesItems component,
+    // reused by both this and TodoCategoriesListLitem component
+    const renderTodoCategories = (todoCatsIds) => {
+        const renderCategoryItem = (todoCatId) => {
+            return (
+                <TodoCategoriesListItem
+                    key={todoCatId}
+                    value={todoCatId} // isn't used by component, can be deleted?
+                    id={todoCatId}
+                    chosenCategoryId={chosenCategoryId}
+                    todoCategoryItem={categoriesStorage[todoCatId]}
+                    renderNestedList={renderTodoCategories}
+                    actions={actions}
+                    chosenItemToEditId={chosenItemToEditId}
+                    filter={filter}
+                />
             );
-            return categoriesToRender.map(renderCategoryItem);
         };
-        return (
-            <SelectableList
-                value={this.state.selectedIndex}
-                onChange={this.handleRequestChange} // don't do anything, can be deleted?
-            >
-                {renderTodoCategories(root.categoriesIds)}
-            </SelectableList>
+        const categoriesToRender = todoCatsIds.filter(
+            (catId) => showCompleted || categoriesStorage[catId].visible
         );
-    }
+        return categoriesToRender.map(renderCategoryItem);
+    };
+    return (
+        <SelectableList
+            value={selectedId}
+            onChange={handleSelectItem} // don't do anything, can be deleted?
+        >
+            {renderTodoCategories(root.categoriesIds)}
+        </SelectableList>
+    );
 }
