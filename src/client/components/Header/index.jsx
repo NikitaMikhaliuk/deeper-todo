@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AppBar from 'material-ui/AppBar';
 import LinearProgress from 'material-ui/LinearProgress';
@@ -15,124 +15,113 @@ import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import HeaderIconButton from './HeaderIconButton.jsx';
 import './index.css';
 
-export default class Header extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            filter: '',
-        };
+export default function Header({
+    actions,
+    currentLinkPath,
+    progress,
+    undoDisabled,
+    redoDisabled,
+}) {
+    const [filter, setFilter] = useState('');
+
+    function handleFilterChange(e) {
+        setFilter(e.target.value);
     }
 
-    componentDidMount() {
-        this.setState({
-            filter: this.props.filter,
-        });
+    function handleShowDoneCheck(e, isChecked) {
+        actions.ToggleShowCompleted(isChecked);
     }
 
-    handleFilterChange = (evt) => {
-        this.setState({
-            filter: evt.target.value,
-        });
-    };
+    function handleSubmitFilter() {
+        actions.ApplyFilter(filter);
+    }
 
-    handleShowDoneCheck = (evt, isChecked) => {
-        this.props.actions.ToggleShowCompleted(isChecked);
-    };
+    function handleUndoClick() {
+        actions.Undo();
+    }
 
-    handleSubmitFilter = () => {
-        this.props.actions.ApplyFilter(this.state.filter);
-    };
+    function handleRedoClick() {
+        actions.Redo();
+    }
 
-    handleUndoClick = () => {
-        this.props.actions.Undo();
-    };
-
-    handleRedoClick = () => {
-        this.props.actions.Redo();
-    };
-
-    render() {
-        const completed = this.props.progress * 100;
-        const exitButton = (
-            <a href={`${window.location.origin}/logout`}>
-                <HeaderIconButton>
-                    <ExitToApp />
-                </HeaderIconButton>
-            </a>
-        );
-        const homeButton = (
+    const completed = progress * 100;
+    const exitButton = (
+        <a href={`${window.location.origin}/logout`}>
             <HeaderIconButton>
-                <List />
+                <ExitToApp />
             </HeaderIconButton>
-        );
-        return (
-            <header className='b-header'>
-                <AppBar
-                    title={<span>DeeperTodo</span>}
-                    titleStyle={{ margin: 'auto 10px' }}
-                    iconElementLeft={homeButton}
-                    iconStyleLeft={{ margin: 'auto 10px' }}
-                    iconElementRight={exitButton}
-                    iconStyleRight={{ margin: 'auto 0' }}
-                ></AppBar>
-                <Subheader>Total progress</Subheader>
-                <LinearProgress
-                    mode='determinate'
-                    value={completed}
-                    style={{ marginBottom: '10px' }}
-                />
-                <div className='b-header__control-panel'>
-                    <div>
-                        <RaisedButton
-                            label='UNDO'
-                            onClick={this.handleUndoClick}
-                            style={{ margin: ' 0 10px' }}
-                            disabled={this.props.undoDisabled}
-                            icon={<Undo />}
-                        />
-                        <RaisedButton
-                            label='REDO'
-                            labelPosition='before'
-                            onClick={this.handleRedoClick}
-                            style={{ margin: '0 10px' }}
-                            disabled={this.props.redoDisabled}
-                            icon={<Redo />}
-                        />
-                    </div>
-                    <div>
-                        <Checkbox
-                            checked={this.props.showCompleted}
-                            label='Show done'
-                            onCheck={this.handleShowDoneCheck}
-                        />
-                        <TextField
-                            type='search'
-                            placeholder='Filter'
-                            value={this.state.filter}
-                            onChange={this.handleFilterChange}
-                            inputStyle={{
-                                fontSize: '110%',
-                            }}
-                            id={'1'}
-                        />
-                        <Link
-                            style={{ color: 'inherit', textDecoration: 'none' }}
-                            to={
-                                this.props.currentLinkPath +
-                                (this.state.filter
-                                    ? `&filter=${this.state.filter}`
-                                    : '')
-                            }
-                        >
-                            <FlatButton
-                                onClick={this.handleSubmitFilter}
-                                label='Search'
-                            />
-                        </Link>
-                    </div>
+        </a>
+    );
+    const homeButton = (
+        <HeaderIconButton>
+            <List />
+        </HeaderIconButton>
+    );
+    return (
+        <header className='b-header'>
+            <AppBar
+                title={<span>DeeperTodo</span>}
+                titleStyle={{ margin: 'auto 10px' }}
+                iconElementLeft={homeButton}
+                iconStyleLeft={{ margin: 'auto 10px' }}
+                iconElementRight={exitButton}
+                iconStyleRight={{ margin: 'auto 0' }}
+            ></AppBar>
+            <Subheader>Total progress</Subheader>
+            <LinearProgress
+                mode='determinate'
+                value={completed}
+                style={{ marginBottom: '10px' }}
+            />
+            <div className='b-header__control-panel'>
+                <div>
+                    <RaisedButton
+                        label='UNDO'
+                        onClick={handleUndoClick}
+                        style={{ margin: ' 0 10px' }}
+                        disabled={undoDisabled}
+                        icon={<Undo />}
+                    />
+                    <RaisedButton
+                        label='REDO'
+                        labelPosition='before'
+                        onClick={handleRedoClick}
+                        style={{ margin: '0 10px' }}
+                        disabled={redoDisabled}
+                        icon={<Redo />}
+                    />
                 </div>
-                <Divider />
-            </header>
-        );
-    }
+                <div>
+                    <Checkbox
+                        // checked={props.showCompleted}
+                        label='Show done'
+                        onCheck={handleShowDoneCheck}
+                    />
+                    <TextField
+                        type='search'
+                        placeholder='Filter'
+                        value={filter}
+                        onChange={handleFilterChange}
+                        inputStyle={{
+                            fontSize: '110%',
+                        }}
+                        id={'1'}
+                    />
+                    <Link
+                        style={{ color: 'inherit', textDecoration: 'none' }}
+                        to={
+                            currentLinkPath +
+                            (filter ? `&filter=${filter}` : '')
+                        }
+                    >
+                        <FlatButton
+                            onClick={handleSubmitFilter}
+                            label='Search'
+                        />
+                    </Link>
+                </div>
+            </div>
+            <Divider />
+        </header>
+    );
 }

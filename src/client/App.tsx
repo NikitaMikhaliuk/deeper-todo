@@ -12,7 +12,7 @@ import { Route, withRouter } from 'react-router-dom';
 import actionCreators from './actions';
 import todoListReducer from './reducers/todoList';
 import appViewReducer from './reducers/appView';
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useMemo, useReducer, useRef } from 'react';
 import { fromJS } from 'immutable';
 
 function reducer(state, action) {
@@ -111,17 +111,24 @@ function AppComponent({ location }: any) {
         todoList,
     } = mapState(state);
 
-    const actions = {};
-    for (const [actionName, actionCreator] of Object.entries(actionCreators)) {
-        actions[actionName] = (...args) => {
-            const action = actionCreator(...args);
-            if (action.type) {
-                dispatch(action);
-            } else if (typeof action === 'function') {
-                action(dispatch, () => stateRef.current);
-            }
-        };
-    }
+    const actions = useMemo(() => {
+        const result = {};
+        for (const [actionName, actionCreator] of Object.entries(
+            actionCreators
+        )) {
+            result[actionName] = (...args) => {
+                const action = actionCreator(...args);
+                if (action.type) {
+                    dispatch(action);
+                } else if (typeof action === 'function') {
+                    action(dispatch, () => stateRef.current);
+                }
+            };
+        }
+
+        return result;
+    }, [dispatch]);
+
     if (!todoList) {
         return <div>Loading</div>;
     }
@@ -136,13 +143,11 @@ function AppComponent({ location }: any) {
                         <Header
                             {...props}
                             actions={actions}
-                            filter={filter}
                             currentLinkPath={
                                 chosenCategory
                                     ? chosenCategory.linkPath
                                     : location.pathname
                             }
-                            showCompleted={showCompleted}
                             progress={todoList.totalProgress}
                             undoDisabled={!todoList.prevState}
                             redoDisabled={!todoList.nextState}
@@ -154,6 +159,7 @@ function AppComponent({ location }: any) {
                         render={() => (
                             <Sidebar
                                 actions={actions}
+                                chosenCategoryId={chosenCategoryId}
                                 chosenItemToEditId={chosenItemToEditId}
                                 root={todoList.root}
                                 categoriesStorage={todoList.categoriesStorage}

@@ -1,7 +1,6 @@
-import React from 'react';
 import IconButton from 'material-ui/IconButton';
 
-export default function HeaderIconElement(props) {
+export default function HeaderIconElement({ children }) {
     return (
         <IconButton
             iconStyle={{
@@ -11,7 +10,7 @@ export default function HeaderIconElement(props) {
             }}
             style={{ padding: '0' }}
         >
-            {props.children}
+            {children}
         </IconButton>
     );
 }

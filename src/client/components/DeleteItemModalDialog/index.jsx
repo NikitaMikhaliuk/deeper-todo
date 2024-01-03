@@ -1,18 +1,22 @@
-import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
-export default function DeleteItemModalDialog(props) {
+export default function DeleteItemModalDialog({
+    handleCancelDelete,
+    handleSubmitDelete,
+    show,
+    text,
+}) {
     const actions = [
         <FlatButton
             label='Cancel'
             primary={true}
-            onClick={props.handleCancelDelete}
+            onClick={handleCancelDelete}
         />,
         <FlatButton
             label='Delete'
             secondary={true}
-            onClick={props.handleSubmitDelete}
+            onClick={handleSubmitDelete}
         />,
     ];
     return (
@@ -20,9 +24,9 @@ export default function DeleteItemModalDialog(props) {
             title='Confirm Delete'
             actions={actions}
             modal={true}
-            open={props.show}
+            open={show}
         >
-            {props.text}
+            {text}
         </Dialog>
     );
 }
