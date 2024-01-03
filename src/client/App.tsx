@@ -112,11 +112,11 @@ function AppComponent({ location }: any) {
     } = mapState(state);
 
     const actions = useMemo(() => {
-        const actions = {};
+        const result = {};
         for (const [actionName, actionCreator] of Object.entries(
             actionCreators
         )) {
-            actions[actionName] = (...args) => {
+            result[actionName] = (...args) => {
                 const action = actionCreator(...args);
                 if (action.type) {
                     dispatch(action);
@@ -126,7 +126,7 @@ function AppComponent({ location }: any) {
             };
         }
 
-        return actions;
+        return result;
     }, [dispatch]);
 
     if (!todoList) {
