@@ -16,18 +16,18 @@ export default function Sidebar({
     showCompleted,
     filter,
 }) {
-    const [addCategory, setAddCategory] = useState('');
+    const [newCategory, setNewCategory] = useState('');
 
     function handleAddCategoryInput(e) {
-        setAddCategory(e.target.value);
+        setNewCategory(e.target.value);
     }
 
     function submitCategoryAdd() {
-        if (addCategory) {
-            const name = addCategory;
+        if (newCategory) {
+            const name = newCategory;
             const linkPath = root.linkPath + nameToUrl(name);
             actions.AddCategory('root', name, crypto.randomUUID(), linkPath);
-            setAddCategory('');
+            setNewCategory('');
         }
     }
 
@@ -46,7 +46,7 @@ export default function Sidebar({
                         hintText='Enter Category Title'
                         style={{ margin: '5px' }}
                         id={'2'}
-                        value={addCategory}
+                        value={newCategory}
                         onChange={handleAddCategoryInput}
                     />
                     <FlatButton label='Add' onClick={submitCategoryAdd} />

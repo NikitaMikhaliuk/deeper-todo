@@ -17,16 +17,16 @@ export default function Main({
     showCompleted,
     rootLinkpath,
 }) {
-    const [addItem, setAddItem] = useState('');
+    const [newItem, setNewItem] = useState('');
 
     function handleAddItemInputChange(e) {
-        setAddItem(e.target.value);
+        setNewItem(e.target.value);
     }
 
     function handleSubmitAddItem() {
-        if (addItem) {
-            actions.AddTodoItem(crypto.randomUUID(), addItem, chosenCategoryId);
-            setAddItem('');
+        if (newItem) {
+            actions.AddTodoItem(crypto.randomUUID(), newItem, chosenCategoryId);
+            setNewItem('');
         }
     }
 
@@ -50,7 +50,7 @@ export default function Main({
                                     <div className='b-main__add-task-form'>
                                         <TextField
                                             onChange={handleAddItemInputChange}
-                                            value={addItem}
+                                            value={newItem}
                                             type='text'
                                             hintText='Enter TodoItem Title'
                                             style={{ margin: '5px' }}
