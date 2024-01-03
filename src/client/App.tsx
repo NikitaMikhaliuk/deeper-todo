@@ -1,7 +1,3 @@
-import './App.css';
-
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Main from './components/Main';
@@ -14,6 +10,7 @@ import todoListReducer from './reducers/todoList';
 import appViewReducer from './reducers/appView';
 import { useEffect, useMemo, useReducer, useRef } from 'react';
 import { fromJS } from 'immutable';
+import './App.css';
 
 function reducer(state, action) {
     if (action.type === 'INITIAL_UPLOAD') {
@@ -190,15 +187,5 @@ function AppComponent({ location }: any) {
     );
 }
 
-// function mapDispatchToProps(dispatch: unknown) {
-//     const boundActions = bindActionCreators(actionCreators, dispatch);
-//     return {
-//         actions: boundActions,
-//     };
-// }
-
-const App = withRouter(
-    AppComponent
-    // connect(mapStateToProps, mapDispatchToProps)(AppComponent)
-);
+const App = withRouter(AppComponent);
 export default App;

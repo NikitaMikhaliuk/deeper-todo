@@ -13,10 +13,10 @@ export default function TodoCategoriesList({
     chosenItemToEditId,
     showCompleted,
 }) {
-    // possibly needes for SelectableList logic, TODO: check if needed in latest Material UI
+    // possibly needed for SelectableList logic, TODO: check if needed in latest Material UI
     const [selectedId, setSelectedId] = useState(null);
 
-    // possibly needes for SelectableList logic, TODO: check if needed in latest Material UI
+    // possibly needed for SelectableList logic, TODO: check if needed in latest Material UI
     function handleSelectItem(value) {
         setSelectedId(value);
     }
