@@ -11,6 +11,7 @@ import appViewReducer from './reducers/appView';
 import { useEffect, useMemo, useReducer, useRef } from 'react';
 import { fromJS } from 'immutable';
 import './App.css';
+import UserContext from './contexts/userContext';
 
 function reducer(state, action) {
     if (action.type === 'INITIAL_UPLOAD') {
@@ -57,8 +58,8 @@ function AppComponent({ location }: any) {
     const stateRef = useRef(state);
     stateRef.current = state;
 
+    const username = window.location.pathname.split('/')[2];
     useEffect(() => {
-        const username = window.location.pathname.split('/')[2];
         const xhr = new XMLHttpRequest();
         xhr.open('GET', `/api/users/${username}/get-todolist`, true);
         xhr.send();
@@ -98,7 +99,7 @@ function AppComponent({ location }: any) {
                 payload: uploadedState,
             });
         };
-    }, []);
+    }, [username]);
 
     const {
         chosenCategoryId,
@@ -133,57 +134,61 @@ function AppComponent({ location }: any) {
     console.log(todoList);
     const chosenCategory = todoList.categoriesStorage[chosenCategoryId];
     return (
-        <MuiThemeProvider muiTheme={getMuiTheme(MyTheme)}>
-            <div>
-                <Route
-                    render={(props: object) => (
-                        <Header
-                            {...props}
-                            actions={actions}
-                            currentLinkPath={
-                                chosenCategory
-                                    ? chosenCategory.linkPath
-                                    : location.pathname
-                            }
-                            progress={todoList.totalProgress}
-                            undoDisabled={!todoList.prevState}
-                            redoDisabled={!todoList.nextState}
-                        />
-                    )}
-                />
-                <div style={{ display: 'flex', height: '100%' }}>
+        <UserContext user={username}>
+            <MuiThemeProvider muiTheme={getMuiTheme(MyTheme)}>
+                <div>
                     <Route
-                        render={() => (
-                            <Sidebar
-                                actions={actions}
-                                chosenCategoryId={chosenCategoryId}
-                                chosenItemToEditId={chosenItemToEditId}
-                                root={todoList.root}
-                                categoriesStorage={todoList.categoriesStorage}
-                                showCompleted={showCompleted}
-                                filter={filter}
-                            />
-                        )}
-                    />
-                    <Route
-                        path={todoList.root.linkPath}
                         render={(props: object) => (
-                            <Main
+                            <Header
                                 {...props}
-                                chosenCategory={chosenCategory}
-                                chosenCategoryId={chosenCategoryId}
-                                chosenItemToEditId={chosenItemToEditId}
-                                itemsStorage={todoList.itemsStorage}
-                                rootLinkpath={todoList.root.linkPath}
                                 actions={actions}
-                                filter={filter}
-                                showCompleted={showCompleted}
+                                currentLinkPath={
+                                    chosenCategory
+                                        ? chosenCategory.linkPath
+                                        : location.pathname
+                                }
+                                progress={todoList.totalProgress}
+                                undoDisabled={!todoList.prevState}
+                                redoDisabled={!todoList.nextState}
                             />
                         )}
                     />
+                    <div style={{ display: 'flex', height: '100%' }}>
+                        <Route
+                            render={() => (
+                                <Sidebar
+                                    actions={actions}
+                                    chosenCategoryId={chosenCategoryId}
+                                    chosenItemToEditId={chosenItemToEditId}
+                                    root={todoList.root}
+                                    categoriesStorage={
+                                        todoList.categoriesStorage
+                                    }
+                                    showCompleted={showCompleted}
+                                    filter={filter}
+                                />
+                            )}
+                        />
+                        <Route
+                            path={todoList.root.linkPath}
+                            render={(props: object) => (
+                                <Main
+                                    {...props}
+                                    chosenCategory={chosenCategory}
+                                    chosenCategoryId={chosenCategoryId}
+                                    chosenItemToEditId={chosenItemToEditId}
+                                    itemsStorage={todoList.itemsStorage}
+                                    rootLinkpath={todoList.root.linkPath}
+                                    actions={actions}
+                                    filter={filter}
+                                    showCompleted={showCompleted}
+                                />
+                            )}
+                        />
+                    </div>
                 </div>
-            </div>
-        </MuiThemeProvider>
+            </MuiThemeProvider>
+        </UserContext>
     );
 }
 
