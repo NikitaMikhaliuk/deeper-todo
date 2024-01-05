@@ -151,7 +151,7 @@ TodoListSchema.methods.editTodoItem = function (params) {
     if (newName) {
         todoItem.name = newName;
     }
-    if (newDescription) {
+    if (typeof newDescription === 'string') {
         todoItem.description = newDescription;
     }
     if (isCompleted) {

@@ -173,9 +173,10 @@ function EditTodoItem(params, state) {
     newState = newName
         ? newState.setIn(['itemsStorage', id, 'name'], newName)
         : newState;
-    newState = newDescription
-        ? newState.setIn(['itemsStorage', id, 'description'], newDescription)
-        : newState;
+    newState = newState.setIn(
+        ['itemsStorage', id, 'description'],
+        newDescription
+    );
     const parentCategoryId = newState.getIn([
         'itemsStorage',
         id,
