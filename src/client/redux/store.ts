@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import type { Dispatch, Middleware, UnknownAction } from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
 import appViewReducer from './slices/appViewSlice';
 import todoListReducer from './slices/todoListSlice';
@@ -7,7 +8,11 @@ import todoCategoriesReducer from './slices/todoCategoriesSlice';
 
 console.log('import.meta.env.DEV:', import.meta.env.DEV);
 
-const logger = createLogger({ diff: true, level: 'log' });
+const logger = createLogger({ diff: true, level: 'log' }) as Middleware<
+    unknown,
+    unknown,
+    Dispatch<UnknownAction>
+>;
 
 const middlewares = import.meta.env.DEV ? [logger] : [];
 
@@ -24,3 +29,6 @@ const store = configureStore({
 });
 
 export default store;
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
