@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Checkbox from 'material-ui/Checkbox';
 import IconButton from 'material-ui/IconButton';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
-import { nameToUrl } from '../../utils/url-name-transforms.js';
+import { nameToUrl } from '../../utils';
 
 export default function TodoListItem({
     actions,

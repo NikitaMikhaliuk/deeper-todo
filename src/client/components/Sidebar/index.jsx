@@ -4,7 +4,7 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import TodoCategoriesList from '../TodoCategoriesList/index.jsx';
-import { nameToUrl } from '../../utils/url-name-transforms.js';
+import { nameToUrl } from '../../utils';
 import './index.css';
 
 export default function Sidebar({

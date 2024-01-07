@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ListItem } from 'material-ui/List';
 import { grey400 } from 'material-ui/styles/colors';
@@ -7,7 +7,7 @@ import IconButton from 'material-ui/IconButton';
 import OptionsMenu from './OptionsMenu.jsx';
 import MyInputForm from '../MyInputForm/index.jsx';
 import DeleteItemModalDialog from '../DeleteItemModalDialog/index.jsx';
-import { nameToUrl } from '../../utils/url-name-transforms.js';
+import { nameToUrl } from '../../utils';
 
 const styles = {
     todoCategoryLink: {
@@ -100,7 +100,7 @@ export default function TodoCategoriesListItem({
             {todoCategoryItem.name}
         </Link>
     );
-    
+
     const isSelected = chosenCategoryId === id;
     const nestedArr = renderNestedList(todoCategoryItem.categoriesIds);
     const nestedItemsToRender = showAddNestedCatForm

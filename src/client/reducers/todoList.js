@@ -1,6 +1,6 @@
 import { fromJS, List } from 'immutable';
 import * as constants from '../constants';
-import { nameToUrl } from '..//utils/url-name-transforms';
+import { nameToUrl } from '../utils';
 
 function updateCategoriesProgress(categoryId, state) {
     let chekingCatId = categoryId;
