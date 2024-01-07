@@ -8,7 +8,7 @@ export function nameToUrl(name: string) {
 
 export function groupBy<T>(
     items: Array<T>,
-    callbackFn: (value: T, index: number) => string | symbol
+    callbackFn: (value: T, index?: number) => string | symbol
 ) {
     return items.reduce((groupedItems, item, index) => {
         const groupKey = callbackFn(item, index);
