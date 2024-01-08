@@ -6,8 +6,6 @@ import todoListReducer from './slices/todoListSlice';
 import todoItemsReducer from './slices/todoItemsSlice';
 import todoCategoriesReducer from './slices/todoCategoriesSlice';
 
-console.log('import.meta.env.DEV:', import.meta.env.DEV);
-
 const logger = createLogger({ diff: true, level: 'log' }) as Middleware<
     unknown,
     unknown,
