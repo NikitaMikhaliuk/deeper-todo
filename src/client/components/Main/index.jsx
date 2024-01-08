@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
@@ -75,9 +75,7 @@ export default function Main({
                                         showCompleted={showCompleted}
                                     />
                                 </div>
-                            ) : (
-                                <Redirect to={rootLinkpath} />
-                            );
+                            ) : null;
                         }}
                     />
                     <Route
@@ -94,7 +92,6 @@ export default function Main({
                             );
                         }}
                     />
-                    <Redirect to={rootLinkpath} />
                 </Switch>
             </Paper>
         </main>
