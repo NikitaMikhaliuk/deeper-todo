@@ -46,6 +46,7 @@ export default function TodoItemEditForm({
                 >
                     <RaisedButton
                         label='Save changes'
+                        disabled={!name}
                         onClick={handleSubmitItemEdit}
                     />
                 </Link>

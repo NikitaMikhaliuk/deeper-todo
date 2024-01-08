@@ -117,12 +117,7 @@ export function AddTodoItem(id, name, parentCategoryId) {
     };
 }
 
-export function EditTodoItem(
-    id,
-    isCompleted,
-    newName = '',
-    newDescription = ''
-) {
+export function EditTodoItem(id, isCompleted, newName, newDescription=null) {
     return (dispatch, getState) => {
         const action = {
             type: constants.EDIT_TODO_ITEM,
