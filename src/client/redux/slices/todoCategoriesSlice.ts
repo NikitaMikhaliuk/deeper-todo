@@ -27,9 +27,6 @@ type InitialState = {
     idsGroupedByParent: Record<string, string[]>;
 };
 
-type TodoCategoriesSliceState = InitialState &
-    ReturnType<typeof todoCategoriesAdapter.getInitialState>;
-
 export const todoCategoriesSlice = createSlice({
     name: 'todoCategories',
     reducerPath: 'todoCategories',
