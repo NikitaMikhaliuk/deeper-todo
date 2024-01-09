@@ -17,7 +17,7 @@ export type TodoCategory = {
     visible?: boolean;
 };
 
-type TodoCategoryRenameOptions = {
+export type TodoCategoryRenameOptions = {
     id: string;
     changes: Pick<TodoCategory, 'name'>;
 };
@@ -101,6 +101,7 @@ export const todoCategoriesSlice = createSlice({
 export const {
     setCategories,
     addCategory,
+    renameCategory,
     removeCategoryFromParent,
     deleteCategories,
 } = todoCategoriesSlice.actions;
