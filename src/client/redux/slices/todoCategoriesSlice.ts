@@ -5,6 +5,7 @@ import {
     createSelector,
 } from '@reduxjs/toolkit';
 import { groupBy } from '../../utils';
+import type { RootState } from '../store';
 
 export type TodoCategory = {
     id: string;
@@ -85,9 +86,9 @@ export const {
 } = todoCategoriesSlice.actions;
 export const { getCategoryById } = todoCategoriesSlice.selectors;
 
-export const makeGetcategoryIdsByParent = (parentId: string) =>
+export const makeGetCategoryIdsByParent = (parentId: string) =>
     createSelector(
-        [(state: TodoCategoriesSliceState) => state],
+        [(state: RootState) => state.todoCategories],
         (state) => state.idsGroupedByParent[parentId]
     );
 
