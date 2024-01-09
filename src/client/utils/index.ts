@@ -3,7 +3,7 @@ export function nameToUrl(name: string) {
 }
 
 export function groupBy<T>(
-    items: Array<T>,
+    items: T[],
     callbackFn: (value: T, index?: number) => string | symbol
 ) {
     return items.reduce((groupedItems, item, index) => {
@@ -14,4 +14,8 @@ export function groupBy<T>(
         groupedItems[groupKey].push(item);
         return groupedItems;
     }, {} as Record<string | symbol, T[]>);
+}
+
+export function getCategoriesRootPath(username: string) {
+    return `/app/${username}/categories`;
 }
