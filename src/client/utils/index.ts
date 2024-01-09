@@ -1,5 +1,5 @@
 export function nameToUrl(name: string) {
-    return '/' + name.split(' ').join('-');
+    return encodeURI('/' + name.toLowerCase().split(' ').join('-'));
 }
 
 export function groupBy<T>(
