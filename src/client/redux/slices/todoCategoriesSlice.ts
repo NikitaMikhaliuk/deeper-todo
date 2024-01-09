@@ -4,13 +4,14 @@ import {
     PayloadAction,
     createSelector,
 } from '@reduxjs/toolkit';
-import { groupBy, getCategoriesRootPath, nameToUrl } from '../../utils';
+import { groupBy, nameToUrl } from '../../utils';
 import type { RootState } from '../store';
 
 export type TodoCategory = {
     id: string;
     _id?: string;
     parentCategoryId: string;
+    linkPath: string;
     name: string;
     completed: boolean;
     visible?: boolean;
@@ -52,7 +53,29 @@ export const todoCategoriesSlice = createSlice({
             state,
             action: PayloadAction<TodoCategoryRenameOptions>
         ) => {
+            const { id } = action.payload;
+            const { name: oldName } = state.entities[id];
+            const oldEscapedName = nameToUrl(oldName);
             todoCategoriesAdapter.updateOne(state, action.payload);
+            const { name: newName } = action.payload.changes;
+            const newEscapedName = nameToUrl(newName);
+            const categories = todoCategoriesAdapter
+                .getSelectors()
+                .selectAll(state);
+            const linkPathsChanges = categories
+                .filter((category) =>
+                    category.linkPath.includes(oldEscapedName)
+                )
+                .map((category) => ({
+                    id: category.id,
+                    changes: {
+                        linkPath: category.linkPath.replace(
+                            oldEscapedName,
+                            newEscapedName
+                        ),
+                    },
+                }));
+            todoCategoriesAdapter.updateMany(state, linkPathsChanges);
         },
         removeCategoryFromParent: (state, action: PayloadAction<string>) => {
             const { id, parentCategoryId } = state.entities[action.payload];
@@ -87,27 +110,6 @@ export const makeGetCategoryIdsByParent = (parentId: string) =>
     createSelector(
         [(state: RootState) => state.todoCategories],
         (state) => state.idsGroupedByParent[parentId]
-    );
-
-export const makeGetCateporyPath = (categoryId: string) =>
-    createSelector(
-        [
-            (state: RootState) =>
-                todoCategoriesAdapter
-                    .getSelectors((state: RootState) => state.todoCategories)
-                    .selectEntities(state),
-            (_state, username: string) => username,
-        ],
-        (categories, username) => {
-            let categoryPath = '';
-            let currentCategory = categoryId;
-            while (currentCategory !== 'root') {
-                const category = categories[currentCategory];
-                categoryPath = nameToUrl(category.name) + categoryPath;
-                currentCategory = category.parentCategoryId;
-            }
-            return getCategoriesRootPath(username) + categoryPath;
-        }
     );
 
 export default todoCategoriesSlice.reducer;
