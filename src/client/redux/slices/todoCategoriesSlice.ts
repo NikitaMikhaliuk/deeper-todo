@@ -4,7 +4,7 @@ import {
     PayloadAction,
     createSelector,
 } from '@reduxjs/toolkit';
-import { groupBy } from '../../utils';
+import { groupBy, getCategoriesRootPath, nameToUrl } from '../../utils';
 import type { RootState } from '../store';
 
 export type TodoCategory = {
@@ -90,6 +90,27 @@ export const makeGetCategoryIdsByParent = (parentId: string) =>
     createSelector(
         [(state: RootState) => state.todoCategories],
         (state) => state.idsGroupedByParent[parentId]
+    );
+
+export const makeGetCateporyPath = (categoryId: string) =>
+    createSelector(
+        [
+            (state: RootState) =>
+                todoCategoriesAdapter
+                    .getSelectors((state: RootState) => state.todoCategories)
+                    .selectEntities(state),
+            (_state, username: string) => username,
+        ],
+        (categories, username) => {
+            let categoryPath = '';
+            let currentCategory = categoryId;
+            while (currentCategory !== 'root') {
+                const category = categories[currentCategory];
+                categoryPath = nameToUrl(category.name) + categoryPath;
+                currentCategory = category.parentCategoryId;
+            }
+            return getCategoriesRootPath(username) + categoryPath;
+        }
     );
 
 export default todoCategoriesSlice.reducer;
