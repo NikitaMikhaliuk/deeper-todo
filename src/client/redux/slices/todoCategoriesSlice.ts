@@ -23,6 +23,7 @@ export type TodoCategoryRenameOptions = {
 };
 
 const todoCategoriesAdapter = createEntityAdapter<TodoCategory>({});
+const { selectById } = todoCategoriesAdapter.getSelectors();
 
 type InitialState = {
     idsGroupedByParent: Record<string, string[]>;
@@ -94,7 +95,7 @@ export const todoCategoriesSlice = createSlice({
         },
     },
     selectors: {
-        getCategoryById: todoCategoriesAdapter.getSelectors().selectById,
+        getCategoryById: selectById,
     },
 });
 
@@ -109,8 +110,8 @@ export const { getCategoryById } = todoCategoriesSlice.selectors;
 
 export const makeGetCategoryIdsByParent = (parentId: string) =>
     createSelector(
-        [(state: RootState) => state.todoCategories],
-        (state) => state.idsGroupedByParent[parentId]
+        [(state: RootState) => state.todoCategories.idsGroupedByParent],
+        (idsGroupedByParent) => idsGroupedByParent[parentId]
     );
 
 export default todoCategoriesSlice.reducer;

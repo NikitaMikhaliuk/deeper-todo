@@ -27,11 +27,12 @@ type TodoItemMoveOptions = {
     changes: Pick<TodoItem, 'parentCategoryId'>;
 };
 
-const todoItemsAdapter = createEntityAdapter<TodoItem>({});
-
 type InitialState = {
     idsGroupedByParent: Record<string, string[]>;
 };
+
+const todoItemsAdapter = createEntityAdapter<TodoItem>({});
+const { selectAll, selectById, selectTotal } = todoItemsAdapter.getSelectors();
 
 type TodoItemsSliceState = InitialState &
     ReturnType<typeof todoItemsAdapter.getInitialState>;
@@ -100,25 +101,23 @@ export const todoItemsSlice = createSlice({
         });
     },
     selectors: {
-        getItemById: todoItemsAdapter.getSelectors().selectById,
+        getItemById: selectById,
         getItemIdsByParent: createSelector(
             [
-                (state: TodoItemsSliceState) => state,
+                (state: TodoItemsSliceState) => state.idsGroupedByParent,
                 (_state, categoryId: string) => categoryId,
             ],
-            (state, categoryId) => state.idsGroupedByParent[categoryId]
+            (idsGroupedByParent, categoryId) => idsGroupedByParent[categoryId]
         ),
         getProgress: createSelector(
             [
-                (state: TodoItemsSliceState) => state,
-                (state: TodoItemsSliceState) =>
-                    todoItemsAdapter.getSelectors().selectTotal(state),
+                (state: TodoItemsSliceState) => selectAll(state),
+                (state: TodoItemsSliceState) => selectTotal(state),
             ],
-            (state, itemsTotal) => {
-                const completedItemsTotal = todoItemsAdapter
-                    .getSelectors()
-                    .selectAll(state)
-                    .filter((item) => item.completed).length;
+            (items, itemsTotal) => {
+                const completedItemsTotal = items.filter(
+                    (item) => item.completed
+                ).length;
                 return Math.round((completedItemsTotal / itemsTotal) * 100);
             }
         ),
