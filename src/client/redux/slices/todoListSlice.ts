@@ -294,7 +294,10 @@ export const todoListSlice = createTodoSlice({
             { fulfilled: saveHistoryEntry }
         ),
         undo: create.asyncThunk(
-            async (_, { getState, dispatch }): Promise<TodoListHistoryEntry | void> => {
+            async (
+                _: void,
+                { getState, dispatch }
+            ): Promise<TodoListHistoryEntry | void> => {
                 const state = getState() as RootState;
                 const prevStateEntry = state.todoList.past.at(-1);
                 if (prevStateEntry) {
@@ -328,7 +331,10 @@ export const todoListSlice = createTodoSlice({
             }
         ),
         redo: create.asyncThunk(
-            async (_, { getState, dispatch }): Promise<TodoListHistoryEntry | void> => {
+            async (
+                _: void,
+                { getState, dispatch }
+            ): Promise<TodoListHistoryEntry | void> => {
                 const state = getState() as RootState;
                 const nextStateEntry = state.todoList.future.at(-1);
                 if (nextStateEntry) {
@@ -362,6 +368,10 @@ export const todoListSlice = createTodoSlice({
             }
         ),
     }),
+    selectors: {
+        getCanUndo: (state) => state.past.length > 0,
+        getCanRedo: (state) => state.future.length > 0,
+    },
 });
 
 export const {
@@ -375,5 +385,7 @@ export const {
     undo,
     redo,
 } = todoListSlice.actions;
+
+export const { getCanUndo, getCanRedo } = todoListSlice.selectors;
 
 export default todoListSlice.reducer;
