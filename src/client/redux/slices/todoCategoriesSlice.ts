@@ -23,7 +23,7 @@ export type TodoCategoryRenameOptions = {
 };
 
 const todoCategoriesAdapter = createEntityAdapter<TodoCategory>({});
-const { selectById } = todoCategoriesAdapter.getSelectors();
+const { selectAll, selectById } = todoCategoriesAdapter.getSelectors();
 
 type InitialState = {
     idsGroupedByParent: Record<string, string[]>;
@@ -46,27 +46,19 @@ export const todoCategoriesSlice = createSlice({
         addCategory: (state, action: PayloadAction<TodoCategory>) => {
             todoCategoriesAdapter.addOne(state, action);
             const { id, parentCategoryId } = action.payload;
-            const { [parentCategoryId]: parentCatChidIds } =
-                state.idsGroupedByParent;
+            const { [parentCategoryId]: parentCatChidIds } = state.idsGroupedByParent;
             parentCatChidIds.unshift(id);
         },
-        renameCategory: (
-            state,
-            action: PayloadAction<TodoCategoryRenameOptions>
-        ) => {
+        renameCategory: (state, action: PayloadAction<TodoCategoryRenameOptions>) => {
             const { id } = action.payload;
             const { name: oldName } = state.entities[id];
             const oldEscapedName = nameToUrl(oldName);
             todoCategoriesAdapter.updateOne(state, action.payload);
             const { name: newName } = action.payload.changes;
             const newEscapedName = nameToUrl(newName);
-            const categories = todoCategoriesAdapter
-                .getSelectors()
-                .selectAll(state);
+            const categories = todoCategoriesAdapter.getSelectors().selectAll(state);
             const linkPathsChanges = categories
-                .filter((category) =>
-                    category.linkPath.includes(oldEscapedName)
-                )
+                .filter((category) => category.linkPath.includes(oldEscapedName))
                 .map((category) => ({
                     id: category.id,
                     changes: {
@@ -80,11 +72,8 @@ export const todoCategoriesSlice = createSlice({
         },
         removeCategoryFromParent: (state, action: PayloadAction<string>) => {
             const { id, parentCategoryId } = state.entities[action.payload];
-            let { [parentCategoryId]: parentCatChildIds } =
-                state.idsGroupedByParent;
-            parentCatChildIds = parentCatChildIds.filter(
-                (catId) => catId !== id
-            );
+            let { [parentCategoryId]: parentCatChildIds } = state.idsGroupedByParent;
+            parentCatChildIds = parentCatChildIds.filter((catId) => catId !== id);
             state.idsGroupedByParent[parentCategoryId] = parentCatChildIds;
         },
         deleteCategories: (state, action: PayloadAction<string[]>) => {
@@ -95,6 +84,7 @@ export const todoCategoriesSlice = createSlice({
         },
     },
     selectors: {
+        getAllCategories: selectAll,
         getCategoryById: selectById,
     },
 });
@@ -106,7 +96,7 @@ export const {
     removeCategoryFromParent,
     deleteCategories,
 } = todoCategoriesSlice.actions;
-export const { getCategoryById } = todoCategoriesSlice.selectors;
+export const { getAllCategories, getCategoryById } = todoCategoriesSlice.selectors;
 
 export const makeGetCategoryIdsByParent = (parentId: string) =>
     createSelector(

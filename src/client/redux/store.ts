@@ -22,8 +22,7 @@ const store = configureStore({
         todoCategories: todoCategoriesReducer,
     },
     devTools: import.meta.env.DEV,
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(middlewares),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middlewares),
 });
 
 export default store;

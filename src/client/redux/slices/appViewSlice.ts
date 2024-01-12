@@ -26,9 +26,5 @@ export const appViewSlice = createSlice({
 
 export default appViewSlice.reducer;
 
-export const {
-    chooseCategory,
-    chooseItemToEdit,
-    toggleShowCompleted,
-    setFilter,
-} = appViewSlice.actions;
+export const { chooseCategory, chooseItemToEdit, toggleShowCompleted, setFilter } =
+    appViewSlice.actions;

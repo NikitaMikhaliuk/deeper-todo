@@ -13,16 +13,16 @@ export type TodoItem = {
     _id?: string;
     parentCategoryId: string;
     name: string;
-    description: string;
+    description?: string;
     completed: boolean;
 };
 
-type TodoItemEditOptions = {
+export type TodoItemEditOptions = {
     id: string;
     changes: Partial<Omit<TodoItem, 'id' | '_id'>>;
 };
 
-type TodoItemMoveOptions = {
+export type TodoItemMoveOptions = {
     id: string;
     changes: Pick<TodoItem, 'parentCategoryId'>;
 };
@@ -54,8 +54,7 @@ export const todoItemsSlice = createSlice({
         addItem: (state, action: PayloadAction<TodoItem>) => {
             todoItemsAdapter.addOne(state, action);
             const { id, parentCategoryId } = action.payload;
-            const { [parentCategoryId]: categoryItems } =
-                state.idsGroupedByParent;
+            const { [parentCategoryId]: categoryItems } = state.idsGroupedByParent;
             categoryItems.unshift(id);
         },
         editItem: (state, action: PayloadAction<TodoItemEditOptions>) => {
@@ -67,18 +66,13 @@ export const todoItemsSlice = createSlice({
                 id,
                 changes: { parentCategoryId: newParentCategoryId },
             } = action.payload;
-            const newParentChildIds =
-                state.idsGroupedByParent[newParentCategoryId];
-            state.idsGroupedByParent[newParentCategoryId] = [
-                id,
-                ...newParentChildIds,
-            ];
-            const { parentCategoryId: oldParentCategoryId } =
-                state.entities[id];
-            const oldParentChildIds =
-                state.idsGroupedByParent[oldParentCategoryId];
-            state.idsGroupedByParent[oldParentCategoryId] =
-                oldParentChildIds.filter((itemId) => itemId !== id);
+            const newParentChildIds = state.idsGroupedByParent[newParentCategoryId];
+            state.idsGroupedByParent[newParentCategoryId] = [id, ...newParentChildIds];
+            const { parentCategoryId: oldParentCategoryId } = state.entities[id];
+            const oldParentChildIds = state.idsGroupedByParent[oldParentCategoryId];
+            state.idsGroupedByParent[oldParentCategoryId] = oldParentChildIds.filter(
+                (itemId) => itemId !== id
+            );
         },
         deleteItem: (state, action: PayloadAction<string>) => {
             const { id, parentCategoryId } = state.entities[action.payload];
@@ -102,6 +96,7 @@ export const todoItemsSlice = createSlice({
     },
     selectors: {
         getItemById: selectById,
+        getAllItems: selectAll,
         getItemIdsByParent: createSelector(
             [
                 (state: TodoItemsSliceState) => state.idsGroupedByParent,
@@ -124,8 +119,9 @@ export const todoItemsSlice = createSlice({
     },
 });
 
-export const { setItems, addItem, deleteItem } = todoItemsSlice.actions;
-export const { getItemById, getItemIdsByParent, getProgress } =
+export const { setItems, addItem, editItem, moveItem, deleteItem } =
+    todoItemsSlice.actions;
+export const { getItemById, getAllItems, getItemIdsByParent, getProgress } =
     todoItemsSlice.selectors;
 
 export default todoItemsSlice.reducer;
