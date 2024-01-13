@@ -5,14 +5,17 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { grey400 } from 'material-ui/styles/colors';
 import './index.css';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getItemById } from '../../redux/slices/todoItemsSlice';
+import { chooseItemToEdit } from '../../redux/slices/appViewSlice';
 
-export default function TodoItemEditForm({
-    actions,
-    filter,
-    parentCatLinkPath,
-    todoItem,
-    todoItemId,
-}) {
+export default function TodoItemEditForm({ actions, parentCatLinkPath }) {
+    const filter = useAppSelector((state) => state.appView.filter);
+    const chosenItemToEditId = useAppSelector(
+        (state) => state.appView.chosenItemToEditId
+    );
+    const todoItem = useAppSelector((state) => getItemById(state, chosenItemToEditId));
+    const dispatch = useAppDispatch();
     const [name, setName] = useState(todoItem.name);
     const [description, setDescription] = useState(todoItem.description);
     const [done, setDone] = useState(todoItem.completed);
@@ -30,11 +33,12 @@ export default function TodoItemEditForm({
     }
 
     function handleSubmitItemEdit() {
-        actions.EditTodoItem(todoItemId, done, name, description);
+        actions.EditTodoItem(chosenItemToEditId, done, name, description);
+        dispatch(chooseItemToEdit(null));
     }
 
     function handleCancelEdit() {
-        actions.ChoseItemToEdit(null);
+        dispatch(chooseItemToEdit(null));
     }
 
     return (
@@ -68,11 +72,7 @@ export default function TodoItemEditForm({
                     }}
                 />
                 <br />
-                <Checkbox
-                    label='Done'
-                    checked={done}
-                    onCheck={handleDoneCheckbox}
-                />
+                <Checkbox label='Done' checked={done} onCheck={handleDoneCheckbox} />
                 <br />
                 <TextField
                     hintText='Task Description'

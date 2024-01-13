@@ -1,18 +1,12 @@
 import { useState } from 'react';
 import { List, makeSelectable } from 'material-ui/List';
 import TodoCategoriesListItem from './TodoCategoriesListItem.jsx';
+import { useAppSelector } from '../../hooks';
 
 let SelectableList = makeSelectable(List);
 
-export default function TodoCategoriesList({
-    actions,
-    filter,
-    root,
-    categoriesStorage,
-    chosenCategoryId,
-    chosenItemToEditId,
-    showCompleted,
-}) {
+export default function TodoCategoriesList({ actions, root, categoriesStorage }) {
+    const showCompleted = useAppSelector((state) => state.appView.showCompleted);
     // possibly needed for SelectableList logic, TODO: check if needed in latest Material UI
     const [selectedId, setSelectedId] = useState(null);
 
@@ -31,12 +25,9 @@ export default function TodoCategoriesList({
                     key={todoCatId}
                     value={todoCatId} // isn't used by component, can be deleted?
                     id={todoCatId}
-                    chosenCategoryId={chosenCategoryId}
                     todoCategoryItem={categoriesStorage[todoCatId]}
                     renderNestedList={renderTodoCategories}
                     actions={actions}
-                    chosenItemToEditId={chosenItemToEditId}
-                    filter={filter}
                 />
             );
         };

@@ -7,15 +7,7 @@ import TodoCategoriesList from '../TodoCategoriesList/index.jsx';
 import { nameToUrl } from '../../utils';
 import './index.css';
 
-export default function Sidebar({
-    actions,
-    root,
-    categoriesStorage,
-    chosenCategoryId,
-    chosenItemToEditId,
-    showCompleted,
-    filter,
-}) {
+export default function Sidebar({ actions, root, categoriesStorage }) {
     const [newCategory, setNewCategory] = useState('');
 
     function handleAddCategoryInput(e) {
@@ -58,10 +50,6 @@ export default function Sidebar({
                             actions={actions}
                             root={root}
                             categoriesStorage={categoriesStorage}
-                            chosenCategoryId={chosenCategoryId}
-                            chosenItemToEditId={chosenItemToEditId}
-                            showCompleted={showCompleted}
-                            filter={filter}
                         />
                     )}
                 />

@@ -6,18 +6,16 @@ import FlatButton from 'material-ui/FlatButton';
 import TodoItemsList from '../TodoItemsList/index.jsx';
 import TodoItemEditForm from '../TodoItemEditForm/index.jsx';
 import './index.css';
+import { useAppSelector } from '../../hooks';
+import { getCategoryById } from '../../redux/slices/todoCategoriesSlice';
 
-export default function Main({
-    chosenCategory,
-    chosenCategoryId,
-    chosenItemToEditId,
-    itemsStorage,
-    actions,
-    filter,
-    showCompleted,
-    rootLinkpath,
-}) {
+export default function Main({ itemsStorage, actions, rootLinkpath }) {
     const [newItem, setNewItem] = useState('');
+    const filter = useAppSelector((state) => state.appView.filter);
+    const chosenCategoryId = useAppSelector((state) => state.appView.chosenCategoryId);
+    const chosenCategory = useAppSelector((state) =>
+        getCategoryById(state, chosenCategoryId)
+    );
 
     function handleAddItemInputChange(e) {
         setNewItem(e.target.value);
@@ -64,15 +62,9 @@ export default function Main({
                                     </div>
                                     <TodoItemsList
                                         actions={actions}
-                                        itemsToRenderIds={
-                                            chosenCategory.itemsIds
-                                        }
-                                        parentCatLinkPath={
-                                            chosenCategory.linkPath
-                                        }
+                                        itemsToRenderIds={chosenCategory.itemsIds}
+                                        parentCatLinkPath={chosenCategory.linkPath}
                                         itemsStorage={itemsStorage}
-                                        filter={filter}
-                                        showCompleted={showCompleted}
                                     />
                                 </div>
                             ) : null;
@@ -83,11 +75,8 @@ export default function Main({
                         render={() => {
                             return (
                                 <TodoItemEditForm
-                                    todoItem={itemsStorage[chosenItemToEditId]}
-                                    todoItemId={chosenItemToEditId}
                                     parentCatLinkPath={linkPath}
                                     actions={actions}
-                                    filter={filter}
                                 />
                             );
                         }}

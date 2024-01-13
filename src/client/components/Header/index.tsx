@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, FC, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AppBar from 'material-ui/AppBar';
 import LinearProgress from 'material-ui/LinearProgress';
@@ -14,37 +14,52 @@ import List from 'material-ui/svg-icons/action/list';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import HeaderIconButton from './HeaderIconButton.jsx';
 import './index.css';
+import { getProgress } from '../../redux/slices/todoItemsSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getCanRedo, getCanUndo, redo, undo } from '../../redux/slices/todoListSlice';
+import { setFilter, toggleShowCompleted } from '../../redux/slices/appViewSlice';
 
-export default function Header({
-    actions,
+type Props = {
+    currentLinkPath: string;
+    actions: any;
+    undoDisabled: boolean;
+    redoDisabled: boolean;
+};
+
+const Header: FC<Props> = ({
     currentLinkPath,
-    progress,
+    actions,
     undoDisabled,
     redoDisabled,
-}) {
-    const [filter, setFilter] = useState('');
+}) => {
+    const [filter, setFilterValue] = useState('');
+    const progress = useAppSelector(getProgress);
+    const canUndo = useAppSelector(getCanUndo);
+    const canRedo = useAppSelector(getCanRedo);
+    const dispatch = useAppDispatch();
 
-    function handleFilterChange(e) {
-        setFilter(e.target.value);
-    }
+    const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setFilterValue(e.target.value);
+    };
 
-    function handleShowDoneCheck(e, isChecked) {
-        actions.ToggleShowCompleted(isChecked);
-    }
+    const handleShowDoneCheck = () => {
+        dispatch(toggleShowCompleted());
+    };
 
-    function handleSubmitFilter() {
-        actions.ApplyFilter(filter);
-    }
+    const handleSubmitFilter = () => {
+        dispatch(setFilter(filter));
+    };
 
-    function handleUndoClick() {
+    const handleUndoClick = () => {
         actions.Undo();
-    }
+        // dispatch(undo());
+    };
 
-    function handleRedoClick() {
+    const handleRedoClick = () => {
         actions.Redo();
-    }
+        // redo();
+    };
 
-    const completed = progress * 100;
     const exitButton = (
         <a href={`${window.location.origin}/logout`}>
             <HeaderIconButton>
@@ -70,7 +85,7 @@ export default function Header({
             <Subheader>Total progress</Subheader>
             <LinearProgress
                 mode='determinate'
-                value={completed}
+                value={progress}
                 style={{ marginBottom: '10px' }}
             />
             <div className='b-header__control-panel'>
@@ -79,7 +94,7 @@ export default function Header({
                         label='UNDO'
                         onClick={handleUndoClick}
                         style={{ margin: ' 0 10px' }}
-                        disabled={undoDisabled}
+                        disabled={!canUndo && undoDisabled}
                         icon={<Undo />}
                     />
                     <RaisedButton
@@ -87,16 +102,12 @@ export default function Header({
                         labelPosition='before'
                         onClick={handleRedoClick}
                         style={{ margin: '0 10px' }}
-                        disabled={redoDisabled}
+                        disabled={!canRedo && redoDisabled}
                         icon={<Redo />}
                     />
                 </div>
                 <div>
-                    <Checkbox
-                        // checked={props.showCompleted}
-                        label='Show done'
-                        onCheck={handleShowDoneCheck}
-                    />
+                    <Checkbox label='Show done' onCheck={handleShowDoneCheck} />
                     <TextField
                         type='search'
                         placeholder='Filter'
@@ -109,19 +120,15 @@ export default function Header({
                     />
                     <Link
                         style={{ color: 'inherit', textDecoration: 'none' }}
-                        to={
-                            currentLinkPath +
-                            (filter ? `&filter=${filter}` : '')
-                        }
+                        to={currentLinkPath + (filter ? `&filter=${filter}` : '')}
                     >
-                        <FlatButton
-                            onClick={handleSubmitFilter}
-                            label='Search'
-                        />
+                        <FlatButton onClick={handleSubmitFilter} label='Search' />
                     </Link>
                 </div>
             </div>
             <Divider />
         </header>
     );
-}
+};
+
+export default Header;

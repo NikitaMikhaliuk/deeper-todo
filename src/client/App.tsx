@@ -8,10 +8,12 @@ import { Route, withRouter } from 'react-router-dom';
 import actionCreators from './actions';
 import todoListReducer from './reducers/todoList';
 import appViewReducer from './reducers/appView';
-import { useEffect, useMemo, useReducer, useRef } from 'react';
+import { FC, useEffect, useMemo, useReducer, useRef } from 'react';
 import { fromJS } from 'immutable';
 import './App.css';
 import UserContext from './contexts/userContext';
+import { fetchTodoList } from './redux/slices/todoListSlice';
+import { useAppDispatch, useAppSelector } from './hooks';
 
 function reducer(state, action) {
     if (action.type === 'INITIAL_UPLOAD') {
@@ -44,8 +46,8 @@ function mapState(state: State) {
     };
 }
 
-function AppComponent({ location }: any) {
-    const [state, dispatch] = useReducer(reducer, {
+const AppComponent: FC<{ location: string }> = ({ location }) => {
+    const [state, reactDispatch] = useReducer(reducer, {
         appView: fromJS({
             chosenCategoryId: null,
             chosenItemToEditId: null,
@@ -59,6 +61,12 @@ function AppComponent({ location }: any) {
     stateRef.current = state;
 
     const username = window.location.pathname.split('/')[2];
+
+    // redux logic
+    const chosenCategoryId = useAppSelector((state) => state.appView.chosenCategoryId);
+    const dispatch = useAppDispatch();
+    // redux logic
+
     useEffect(() => {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', `/api/users/${username}/get-todolist`, true);
@@ -94,44 +102,39 @@ function AppComponent({ location }: any) {
                     filter: '',
                 }),
             };
-            dispatch({
+            reactDispatch({
                 type: 'INITIAL_UPLOAD',
                 payload: uploadedState,
             });
+
+            // redux logic
+            dispatch(fetchTodoList(username));
+            // redux logic
         };
     }, [username]);
 
-    const {
-        chosenCategoryId,
-        chosenItemToEditId,
-        filter,
-        showCompleted,
-        todoList,
-    } = mapState(state);
+    const { todoList } = mapState(state);
 
     const actions = useMemo(() => {
         const result = {};
-        for (const [actionName, actionCreator] of Object.entries(
-            actionCreators
-        )) {
+        for (const [actionName, actionCreator] of Object.entries(actionCreators)) {
             result[actionName] = (...args) => {
                 const action = actionCreator(...args);
                 if (action.type) {
-                    dispatch(action);
+                    reactDispatch(action);
                 } else if (typeof action === 'function') {
-                    action(dispatch, () => stateRef.current);
+                    action(reactDispatch, () => stateRef.current);
                 }
             };
         }
 
         return result;
-    }, [dispatch]);
+    }, [reactDispatch]);
 
     if (!todoList) {
         return <div>Loading</div>;
     }
 
-    console.log(todoList);
     const chosenCategory = todoList.categoriesStorage[chosenCategoryId];
     return (
         <UserContext user={username}>
@@ -147,7 +150,6 @@ function AppComponent({ location }: any) {
                                         ? chosenCategory.linkPath
                                         : location.pathname
                                 }
-                                progress={todoList.totalProgress}
                                 undoDisabled={!todoList.prevState}
                                 redoDisabled={!todoList.nextState}
                             />
@@ -158,14 +160,8 @@ function AppComponent({ location }: any) {
                             render={() => (
                                 <Sidebar
                                     actions={actions}
-                                    chosenCategoryId={chosenCategoryId}
-                                    chosenItemToEditId={chosenItemToEditId}
                                     root={todoList.root}
-                                    categoriesStorage={
-                                        todoList.categoriesStorage
-                                    }
-                                    showCompleted={showCompleted}
-                                    filter={filter}
+                                    categoriesStorage={todoList.categoriesStorage}
                                 />
                             )}
                         />
@@ -175,13 +171,9 @@ function AppComponent({ location }: any) {
                                 <Main
                                     {...props}
                                     chosenCategory={chosenCategory}
-                                    chosenCategoryId={chosenCategoryId}
-                                    chosenItemToEditId={chosenItemToEditId}
                                     itemsStorage={todoList.itemsStorage}
                                     rootLinkpath={todoList.root.linkPath}
                                     actions={actions}
-                                    filter={filter}
-                                    showCompleted={showCompleted}
                                 />
                             )}
                         />
@@ -190,7 +182,7 @@ function AppComponent({ location }: any) {
             </MuiThemeProvider>
         </UserContext>
     );
-}
+};
 
 const App = withRouter(AppComponent);
 export default App;

@@ -4,15 +4,13 @@ import Checkbox from 'material-ui/Checkbox';
 import IconButton from 'material-ui/IconButton';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 import { nameToUrl } from '../../utils';
+import { chooseItemToEdit } from '../../redux/slices/appViewSlice';
+import { useAppDispatch } from '../../hooks';
 
-export default function TodoListItem({
-    actions,
-    todoItem,
-    id,
-    parentCatLinkPath,
-}) {
+export default function TodoListItem({ actions, todoItem, id, parentCatLinkPath }) {
+    const dispatch = useAppDispatch();
     function handleEditItem() {
-        actions.ChoseItemToEdit(id);
+        dispatch(chooseItemToEdit(id));
     }
 
     function handleCompletedCheckboxToggle(e, isChecked) {
@@ -44,10 +42,7 @@ export default function TodoListItem({
                     style={{ color: 'inherit', textDecoration: 'none' }}
                     to={!todoItem.completed ? itemLinkPath : parentCatLinkPath}
                 >
-                    <IconButton
-                        disabled={todoItem.completed}
-                        onClick={handleEditItem}
-                    >
+                    <IconButton disabled={todoItem.completed} onClick={handleEditItem}>
                         <ModeEdit />
                     </IconButton>
                 </Link>

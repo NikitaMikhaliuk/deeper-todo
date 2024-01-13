@@ -8,6 +8,8 @@ import OptionsMenu from './OptionsMenu.jsx';
 import MyInputForm from '../MyInputForm/index.jsx';
 import DeleteItemModalDialog from '../DeleteItemModalDialog/index.jsx';
 import { nameToUrl } from '../../utils';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { chooseCategory } from '../../redux/slices/appViewSlice';
 
 const styles = {
     todoCategoryLink: {
@@ -23,19 +25,22 @@ const styles = {
 
 export default function TodoCategoriesListItem({
     actions,
-    chosenCategoryId,
-    chosenItemToEditId,
-    filter,
     id,
     renderNestedList,
     todoCategoryItem,
 }) {
+    const filter = useAppSelector((state) => state.appView.filter);
+    const chosenItemToEditId = useAppSelector(
+        (state) => state.appView.chosenItemToEditId
+    );
+    const chosenCategoryId = useAppSelector((state) => state.appView.chosenCategoryId);
+    const dispatch = useAppDispatch();
     const [isEditing, setIsEditing] = useState(false);
     const [showAddNestedCatForm, setShowAddNestedCatForm] = useState(false);
     const [showDeleteModalDialog, setShowDeleteModalDialog] = useState(false);
 
     function handleListItemSelect() {
-        actions.ChoseCategory(id);
+        dispatch(chooseCategory(id));
     }
 
     function handleRenameCat() {

@@ -1,14 +1,16 @@
 import { List } from 'material-ui/List';
 import TodoListItem from './TodoListItem.jsx';
+import { useAppSelector } from '../../hooks';
 
 export default function TodoItemsList({
     itemsStorage,
     itemsToRenderIds,
     actions,
     parentCatLinkPath,
-    filter,
-    showCompleted,
 }) {
+    const filter = useAppSelector((state) => state.appView.filter);
+    const showCompleted = useAppSelector((state) => state.appView.showCompleted);
+
     const filteredItemsToRenderIds = itemsToRenderIds.filter(
         (itemId) =>
             itemsStorage[itemId].name.includes(filter) &&
