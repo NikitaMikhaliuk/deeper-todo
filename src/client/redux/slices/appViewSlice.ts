@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 export const appViewSlice = createSlice({
     name: 'appView',
     initialState: {
-        chosenCategoryId: null,
-        chosenItemToEditId: null,
+        chosenCategoryId: '',
+        chosenItemToEditId: '',
         showCompleted: false,
         filter: '',
     },

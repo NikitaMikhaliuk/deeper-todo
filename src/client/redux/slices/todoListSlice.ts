@@ -98,11 +98,12 @@ function makeHistoryEntry(state: RootState): TodoListHistoryEntry {
     };
 }
 
-function saveHistoryEntry(
+function updateHistory(
     state: TodoListSliceState,
     action: PayloadAction<TodoListHistoryEntry>
 ) {
     state.past.push(action.payload);
+    state.future = [];
 }
 
 export const todoListSlice = createTodoSlice({
@@ -139,7 +140,8 @@ export const todoListSlice = createTodoSlice({
                 category: TodoCategory,
                 { dispatch, getState }
             ): Promise<TodoListHistoryEntry> => {
-                const state = getState() as RootState;
+                const prevState = getState() as RootState;
+                const prevStateHistoryEntry = makeHistoryEntry(prevState);
 
                 const options: RequestInit = {
                     method: 'POST',
@@ -152,13 +154,13 @@ export const todoListSlice = createTodoSlice({
                     credentials: 'include',
                 };
                 await fetch(
-                    `/api/todolists/${state.todoList.id}/add-category`,
+                    `/api/todolists/${prevState.todoList.id}/add-category`,
                     options
                 );
                 dispatch(addCategory(category));
-                return makeHistoryEntry(state);
+                return prevStateHistoryEntry;
             },
-            { fulfilled: saveHistoryEntry }
+            { fulfilled: updateHistory }
         ),
         renameTodoCategory: create.asyncThunk(
             async (
@@ -180,15 +182,16 @@ export const todoListSlice = createTodoSlice({
                     }),
                     credentials: 'include',
                 };
-                const state = getState() as RootState;
+                const prevState = getState() as RootState;
+                const prevStateHistoryEntry = makeHistoryEntry(prevState);
                 await fetch(
-                    `/api/todolists/${state.todoList.id}/rename-category`,
+                    `/api/todolists/${prevState.todoList.id}/rename-category`,
                     options
                 );
                 dispatch(renameCategory(params));
-                return makeHistoryEntry(state);
+                return prevStateHistoryEntry;
             },
-            { fulfilled: saveHistoryEntry }
+            { fulfilled: updateHistory }
         ),
         deleteTodoCategory: create.asyncThunk(
             async (categoryId: string, { dispatch, getState }) => {
@@ -202,16 +205,18 @@ export const todoListSlice = createTodoSlice({
                     }),
                     credentials: 'include',
                 };
-                const state = getState() as RootState;
+                const prevState = getState() as RootState;
+                const prevStateHistoryEntry = makeHistoryEntry(prevState);
                 await fetch(
-                    `/api/todolists/${state.todoList.id}/delete-category`,
+                    `/api/todolists/${prevState.todoList.id}/delete-category`,
                     options
                 );
                 dispatch(removeCategoryFromParent(categoryId));
                 const categoriesIdsToDelete = [categoryId].concat(
-                    calcCategoriesToDelete(categoryId, state)
+                    calcCategoriesToDelete(categoryId, prevState)
                 );
                 dispatch(deleteCategories(categoriesIdsToDelete));
+                return prevStateHistoryEntry;
             }
         ),
         addTodoItem: create.asyncThunk(
@@ -229,15 +234,16 @@ export const todoListSlice = createTodoSlice({
                     }),
                     credentials: 'include',
                 };
-                const state = getState() as RootState;
+                const prevState = getState() as RootState;
+                const prevStateHistoryEntry = makeHistoryEntry(prevState);
                 await fetch(
-                    `/api/todolists/${state.todoList.id}/add-todotask`,
+                    `/api/todolists/${prevState.todoList.id}/add-todotask`,
                     options
                 );
                 dispatch(addItem(item));
-                return makeHistoryEntry(state);
+                return prevStateHistoryEntry;
             },
-            { fulfilled: saveHistoryEntry }
+            { fulfilled: updateHistory }
         ),
         editTodoItem: create.asyncThunk(
             async (
@@ -261,17 +267,20 @@ export const todoListSlice = createTodoSlice({
                     }),
                     credentials: 'include',
                 };
-                const state = getState() as RootState;
+                const prevState = getState() as RootState;
+                const prevStateHistoryEntry = makeHistoryEntry(prevState);
                 await fetch(
-                    `/api/todolists/${state.todoList.id}/edit-todotask`,
+                    `/api/todolists/${prevState.todoList.id}/edit-todotask`,
                     options
                 );
 
                 dispatch(editItem(params));
 
-                // update category 'completed state if all items are completed
-                const { parentCategoryId } = getItemById(state, id);
-                const categoryItems = getItemsByParent(state, parentCategoryId);
+                // update category 'completed' state if all items are completed
+                const udatedState = getState() as RootState;
+                const { parentCategoryId } = getItemById(udatedState, id);
+                const categoryItems = getItemsByParent(udatedState, parentCategoryId);
+                console.log('ON ITEM EDIT1:', categoryItems);
                 if (categoryItems.every((item) => item.completed)) {
                     dispatch(
                         onItemsCompletedChange({
@@ -281,9 +290,9 @@ export const todoListSlice = createTodoSlice({
                     );
                 }
 
-                return makeHistoryEntry(state);
+                return prevStateHistoryEntry;
             },
-            { fulfilled: saveHistoryEntry }
+            { fulfilled: updateHistory }
         ),
         moveTodoItem: create.asyncThunk(
             async (
@@ -302,27 +311,29 @@ export const todoListSlice = createTodoSlice({
                     }),
                     body: JSON.stringify({
                         itemId: id,
-                        newParentCategoryId: parentCategoryId,
+                        newParentCategory: parentCategoryId,
                     }),
                     credentials: 'include',
                 };
-                const state = getState() as RootState;
+                const prevState = getState() as RootState;
+                const prevStateHistoryEntry = makeHistoryEntry(prevState);
                 await fetch(
-                    `/api/todolists/${state.todoList.id}/move-todotask`,
+                    `/api/todolists/${prevState.todoList.id}/move-todotask`,
                     options
                 );
                 dispatch(moveItem(params));
-                return makeHistoryEntry(state);
+                return prevStateHistoryEntry;
             },
-            { fulfilled: saveHistoryEntry }
+            { fulfilled: updateHistory }
         ),
         undo: create.asyncThunk(
             async (
                 _: void,
                 { getState, dispatch }
             ): Promise<TodoListHistoryEntry | void> => {
-                const state = getState() as RootState;
-                const prevStateEntry = state.todoList.past.at(-1);
+                const currentState = getState() as RootState;
+                const currentStateHistoryEntry = makeHistoryEntry(currentState);
+                const prevStateEntry = currentState.todoList.past.at(-1);
                 if (prevStateEntry) {
                     const { categories, items, root } = prevStateEntry;
                     const options: RequestInit = {
@@ -337,11 +348,14 @@ export const todoListSlice = createTodoSlice({
                         }),
                         credentials: 'include',
                     };
-                    await fetch(`/api/todolists/${state.todoList.id}/undo`, options);
+                    await fetch(
+                        `/api/todolists/${currentState.todoList.id}/undo`,
+                        options
+                    );
                     dispatch(setItems(items));
                     dispatch(setCategories(categories));
 
-                    return makeHistoryEntry(state);
+                    return currentStateHistoryEntry;
                 }
             },
             {
@@ -358,8 +372,9 @@ export const todoListSlice = createTodoSlice({
                 _: void,
                 { getState, dispatch }
             ): Promise<TodoListHistoryEntry | void> => {
-                const state = getState() as RootState;
-                const nextStateEntry = state.todoList.future.at(-1);
+                const currentState = getState() as RootState;
+                const currentStateHistoryEntry = makeHistoryEntry(currentState);
+                const nextStateEntry = currentState.todoList.future.at(-1);
                 if (nextStateEntry) {
                     const { categories, items, root } = nextStateEntry;
                     const options: RequestInit = {
@@ -374,11 +389,14 @@ export const todoListSlice = createTodoSlice({
                         }),
                         credentials: 'include',
                     };
-                    await fetch(`/api/todolists/${state.todoList.id}/redo`, options);
+                    await fetch(
+                        `/api/todolists/${currentState.todoList.id}/redo`,
+                        options
+                    );
                     dispatch(setItems(items));
                     dispatch(setCategories(categories));
 
-                    return makeHistoryEntry(state);
+                    return currentStateHistoryEntry;
                 }
             },
             {

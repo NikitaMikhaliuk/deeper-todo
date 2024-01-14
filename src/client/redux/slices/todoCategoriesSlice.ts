@@ -82,7 +82,12 @@ export const todoCategoriesSlice = createSlice({
             todoCategoriesAdapter.addOne(state, action);
             const { id, parentCategoryId } = action.payload;
             const { [parentCategoryId]: parentCatChidIds } = state.idsGroupedByParent;
-            parentCatChidIds.unshift(id);
+            if (!parentCatChidIds) {
+                state.idsGroupedByParent[parentCategoryId] = [id];
+            } else {
+                parentCatChidIds.unshift(id);
+            }
+            state.idsGroupedByParent[id] = [];
         },
         onItemsCompletedChange: (
             state,
@@ -96,6 +101,7 @@ export const todoCategoriesSlice = createSlice({
                 },
             });
             updateCategoriesCompleted(state, id);
+            console.log('ON ITEM EDIT2:', state);
         },
         renameCategory: (state, action: PayloadAction<TodoCategoryRenameOptions>) => {
             const { id } = action.payload;
@@ -157,10 +163,7 @@ export const makeGetCategoriesByIds = (catIds: string[]) => {
     const inputCategoriesSelectors = catIds.map(
         (catId) => (state: RootState) => getCategoryById(state, catId)
     );
-    return createSelector([...inputCategoriesSelectors], (...categories) => {
-        console.log('categories', categories);
-        return categories;
-    });
+    return createSelector([...inputCategoriesSelectors], (...categories) => categories);
 };
 
 export default todoCategoriesSlice.reducer;

@@ -6,7 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { groupBy } from '../../utils';
-import { deleteCategories } from './todoCategoriesSlice';
+import { addCategory, deleteCategories } from './todoCategoriesSlice';
 
 export type TodoItem = {
     id: string;
@@ -56,20 +56,30 @@ export const todoItemsSlice = createSlice({
             todoItemsAdapter.addOne(state, action);
             const { id, parentCategoryId } = action.payload;
             const { [parentCategoryId]: categoryItems } = state.idsGroupedByParent;
-            categoryItems.unshift(id);
+            if (!categoryItems) {
+                state.idsGroupedByParent[parentCategoryId] = [id];
+            } else {
+                categoryItems.unshift(id);
+            }
         },
         editItem: (state, action: PayloadAction<TodoItemEditOptions>) => {
             todoItemsAdapter.updateOne(state, action.payload);
         },
         moveItem: (state, action: PayloadAction<TodoItemMoveOptions>) => {
-            todoItemsAdapter.updateOne(state, action.payload);
             const {
                 id,
                 changes: { parentCategoryId: newParentCategoryId },
             } = action.payload;
-            const newParentChildIds = state.idsGroupedByParent[newParentCategoryId];
-            state.idsGroupedByParent[newParentCategoryId] = [id, ...newParentChildIds];
             const { parentCategoryId: oldParentCategoryId } = state.entities[id];
+            todoItemsAdapter.updateOne(state, action.payload);
+
+            const { [newParentCategoryId]: newParentChildIds } =
+                state.idsGroupedByParent;
+            if (!newParentChildIds) {
+                state.idsGroupedByParent[newParentCategoryId] = [id];
+            } else {
+                newParentChildIds.unshift(id);
+            }
             const oldParentChildIds = state.idsGroupedByParent[oldParentCategoryId];
             state.idsGroupedByParent[oldParentCategoryId] = oldParentChildIds.filter(
                 (itemId) => itemId !== id
@@ -94,6 +104,10 @@ export const todoItemsSlice = createSlice({
             }
             todoItemsAdapter.removeMany(state, itemsToDelete);
         });
+        builder.addCase(addCategory, (state, action) => {
+            const { id } = action.payload;
+            state.idsGroupedByParent[id] = [];
+        });
     },
     selectors: {
         getItemById: selectById,
@@ -104,7 +118,7 @@ export const todoItemsSlice = createSlice({
                     state.idsGroupedByParent[categoryId],
                 (state: TodoItemsSliceState) => selectEntities(state),
             ],
-            (itemIds, entities) => itemIds.map((itemId) => entities[itemId])
+            (itemIds = [], entities) => itemIds.map((itemId) => entities[itemId])
         ),
         getProgress: createSelector(
             [
