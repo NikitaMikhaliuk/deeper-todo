@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export const appViewSlice = createSlice({
     name: 'appView',
@@ -9,16 +9,16 @@ export const appViewSlice = createSlice({
         filter: '',
     },
     reducers: {
-        chooseCategory: (state, action) => {
+        chooseCategory: (state, action: PayloadAction<string>) => {
             state.chosenCategoryId = action.payload;
         },
-        chooseItemToEdit: (state, action) => {
+        chooseItemToEdit: (state, action: PayloadAction<string>) => {
             state.chosenItemToEditId = action.payload;
         },
         toggleShowCompleted: (state) => {
             state.showCompleted = !state.showCompleted;
         },
-        setFilter: (state, action) => {
+        setFilter: (state, action: PayloadAction<string>) => {
             state.filter = action.payload;
         },
     },

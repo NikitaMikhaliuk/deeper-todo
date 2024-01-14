@@ -49,11 +49,11 @@ export default function TodoItemEditForm() {
                 },
             })
         );
-        dispatch(chooseItemToEdit(null));
+        dispatch(chooseItemToEdit(''));
     }
 
     function handleCancelEdit() {
-        dispatch(chooseItemToEdit(null));
+        dispatch(chooseItemToEdit(''));
     }
 
     return (
