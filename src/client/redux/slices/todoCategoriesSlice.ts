@@ -14,6 +14,7 @@ export type TodoCategory = {
     linkPath: string;
     name: string;
     completed: boolean;
+    itemsCompleted?: boolean;
     visible?: boolean;
 };
 
@@ -27,6 +28,40 @@ const { selectAll, selectById } = todoCategoriesAdapter.getSelectors();
 
 type InitialState = {
     idsGroupedByParent: Record<string, string[]>;
+};
+
+type TodoCategoriesSliceState = InitialState &
+    ReturnType<typeof todoCategoriesAdapter.getInitialState>;
+
+const checkCategoryCompleted = (
+    state: TodoCategoriesSliceState,
+    catId: string
+): boolean => {
+    const nestedCatIds = state.idsGroupedByParent[catId];
+    const { itemsCompleted } = selectById(state, catId);
+    if (!nestedCatIds || !nestedCatIds.length) {
+        return !!itemsCompleted;
+    }
+
+    return (
+        nestedCatIds.every((id) => selectById(state, id).completed) && !!itemsCompleted
+    );
+};
+
+const updateCategoriesCompleted = (state: TodoCategoriesSliceState, catId: string) => {
+    if (checkCategoryCompleted(state, catId)) {
+        const { parentCategoryId } = state.entities[catId];
+        todoCategoriesAdapter.updateOne(state, {
+            id: catId,
+            changes: {
+                completed: true,
+                visible: false,
+            },
+        });
+        if (parentCategoryId !== 'root') {
+            updateCategoriesCompleted(state, parentCategoryId);
+        }
+    }
 };
 
 export const todoCategoriesSlice = createSlice({
@@ -48,6 +83,19 @@ export const todoCategoriesSlice = createSlice({
             const { id, parentCategoryId } = action.payload;
             const { [parentCategoryId]: parentCatChidIds } = state.idsGroupedByParent;
             parentCatChidIds.unshift(id);
+        },
+        onItemsCompletedChange: (
+            state,
+            action: PayloadAction<{ id: string; itemsCompleted: boolean }>
+        ) => {
+            const { id, itemsCompleted } = action.payload;
+            todoCategoriesAdapter.updateOne(state, {
+                id,
+                changes: {
+                    itemsCompleted,
+                },
+            });
+            updateCategoriesCompleted(state, id);
         },
         renameCategory: (state, action: PayloadAction<TodoCategoryRenameOptions>) => {
             const { id } = action.payload;
@@ -95,6 +143,7 @@ export const {
     renameCategory,
     removeCategoryFromParent,
     deleteCategories,
+    onItemsCompletedChange,
 } = todoCategoriesSlice.actions;
 export const { getAllCategories, getCategoryById } = todoCategoriesSlice.selectors;
 

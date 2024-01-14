@@ -1,5 +1,13 @@
 import { buildCreateSlice, asyncThunkCreator, PayloadAction } from '@reduxjs/toolkit';
-import { addItem, editItem, getAllItems, moveItem, setItems } from './todoItemsSlice';
+import {
+    addItem,
+    editItem,
+    getAllItems,
+    getItemById,
+    getItemsByParent,
+    moveItem,
+    setItems,
+} from './todoItemsSlice';
 import type {
     TodoItem,
     TodoItemEditOptions,
@@ -13,6 +21,7 @@ import {
     renameCategory,
     getAllCategories,
     makeGetCategoryIdsByParent,
+    onItemsCompletedChange,
 } from './todoCategoriesSlice';
 import type { TodoCategory, TodoCategoryRenameOptions } from './todoCategoriesSlice';
 import type { RootState } from '../store';
@@ -257,7 +266,21 @@ export const todoListSlice = createTodoSlice({
                     `/api/todolists/${state.todoList.id}/edit-todotask`,
                     options
                 );
+
                 dispatch(editItem(params));
+
+                // update category 'completed state if all items are completed
+                const { parentCategoryId } = getItemById(state, id);
+                const categoryItems = getItemsByParent(state, parentCategoryId);
+                if (categoryItems.every((item) => item.completed)) {
+                    dispatch(
+                        onItemsCompletedChange({
+                            id: parentCategoryId,
+                            itemsCompleted: true,
+                        })
+                    );
+                }
+
                 return makeHistoryEntry(state);
             },
             { fulfilled: saveHistoryEntry }
