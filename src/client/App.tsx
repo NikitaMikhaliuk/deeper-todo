@@ -13,8 +13,8 @@ import { useAppDispatch, useAppSelector } from './hooks';
 import { getCategoryById } from './redux/slices/todoCategoriesSlice';
 import { getCategoriesRootPath } from './utils';
 
-const AppComponent: FC<{ location: string }> = ({ location }) => {
-    const username = window.location.pathname.split('/')[2];
+const AppComponent: FC<{ location: Location }> = ({ location }) => {
+    const username = location.pathname.split('/')[2];
 
     const chosenCategoryId = useAppSelector((state) => state.appView.chosenCategoryId);
     const chosenCategory = useAppSelector((state) =>
@@ -35,7 +35,7 @@ const AppComponent: FC<{ location: string }> = ({ location }) => {
     return (
         <UserContext user={username}>
             <MuiThemeProvider muiTheme={getMuiTheme(MyTheme)}>
-                <div>
+                <>
                     <Route
                         render={(props: object) => (
                             <Header
@@ -55,7 +55,7 @@ const AppComponent: FC<{ location: string }> = ({ location }) => {
                             render={(props: object) => <Main {...props} />}
                         />
                     </div>
-                </div>
+                </>
             </MuiThemeProvider>
         </UserContext>
     );
