@@ -21,17 +21,9 @@ import { setFilter, toggleShowCompleted } from '../../redux/slices/appViewSlice'
 
 type Props = {
     currentLinkPath: string;
-    actions: any;
-    undoDisabled: boolean;
-    redoDisabled: boolean;
 };
 
-const Header: FC<Props> = ({
-    currentLinkPath,
-    actions,
-    undoDisabled,
-    redoDisabled,
-}) => {
+const Header: FC<Props> = ({ currentLinkPath }) => {
     const [filter, setFilterValue] = useState('');
     const progress = useAppSelector(getProgress);
     const canUndo = useAppSelector(getCanUndo);
@@ -51,13 +43,11 @@ const Header: FC<Props> = ({
     };
 
     const handleUndoClick = () => {
-        actions.Undo();
-        // dispatch(undo());
+        dispatch(undo());
     };
 
     const handleRedoClick = () => {
-        actions.Redo();
-        // redo();
+        dispatch(redo());
     };
 
     const exitButton = (
@@ -94,7 +84,7 @@ const Header: FC<Props> = ({
                         label='UNDO'
                         onClick={handleUndoClick}
                         style={{ margin: ' 0 10px' }}
-                        disabled={!canUndo && undoDisabled}
+                        disabled={!canUndo}
                         icon={<Undo />}
                     />
                     <RaisedButton
@@ -102,7 +92,7 @@ const Header: FC<Props> = ({
                         labelPosition='before'
                         onClick={handleRedoClick}
                         style={{ margin: '0 10px' }}
-                        disabled={!canRedo && redoDisabled}
+                        disabled={!canRedo}
                         icon={<Redo />}
                     />
                 </div>

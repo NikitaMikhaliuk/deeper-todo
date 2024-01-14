@@ -8,14 +8,19 @@ import './index.css';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getItemById } from '../../redux/slices/todoItemsSlice';
 import { chooseItemToEdit } from '../../redux/slices/appViewSlice';
+import { getCategoryById } from '../../redux/slices/todoCategoriesSlice';
+import { editTodoItem } from '../../redux/slices/todoListSlice';
 
-export default function TodoItemEditForm({ actions, parentCatLinkPath }) {
+export default function TodoItemEditForm() {
     const filter = useAppSelector((state) => state.appView.filter);
     const chosenItemToEditId = useAppSelector(
         (state) => state.appView.chosenItemToEditId
     );
     const todoItem = useAppSelector((state) => getItemById(state, chosenItemToEditId));
     const dispatch = useAppDispatch();
+    const parentCatLinkPath = useAppSelector(
+        (state) => getCategoryById(state, todoItem.parentCategoryId).linkPath
+    );
     const [name, setName] = useState(todoItem.name);
     const [description, setDescription] = useState(todoItem.description);
     const [done, setDone] = useState(todoItem.completed);
@@ -33,7 +38,16 @@ export default function TodoItemEditForm({ actions, parentCatLinkPath }) {
     }
 
     function handleSubmitItemEdit() {
-        actions.EditTodoItem(chosenItemToEditId, done, name, description);
+        dispatch(
+            editTodoItem({
+                id: chosenItemToEditId,
+                changes: {
+                    completed: done,
+                    name,
+                    description,
+                },
+            })
+        );
         dispatch(chooseItemToEdit(null));
     }
 

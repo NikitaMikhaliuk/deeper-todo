@@ -6,31 +6,39 @@ import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 import { nameToUrl } from '../../utils';
 import { chooseItemToEdit } from '../../redux/slices/appViewSlice';
 import { useAppDispatch } from '../../hooks';
+import { editTodoItem } from '../../redux/slices/todoListSlice';
 
-export default function TodoListItem({ actions, todoItem, id, parentCatLinkPath }) {
+export default function TodoListItem({ todoItem, parentCatLinkPath }) {
     const dispatch = useAppDispatch();
+
+    const { id, name, description, completed } = todoItem;
     function handleEditItem() {
         dispatch(chooseItemToEdit(id));
     }
 
-    function handleCompletedCheckboxToggle(e, isChecked) {
-        actions.EditTodoItem(id, isChecked);
+    function handleCompletedCheckboxToggle() {
+        dispatch(
+            editTodoItem({
+                id,
+                changes: {
+                    completed: true,
+                },
+            })
+        );
     }
 
-    const itemLinkPath = parentCatLinkPath + nameToUrl(todoItem.name);
+    const itemLinkPath = parentCatLinkPath + nameToUrl(name);
     return (
         <ListItem
             value={id}
             key={id}
             primaryText={
-                <div style={{ maxWidth: '600px', overflow: 'hidden' }}>
-                    {todoItem.name}
-                </div>
+                <div style={{ maxWidth: '600px', overflow: 'hidden' }}>{name}</div>
             }
             secondaryText={
-                todoItem.description ? (
+                description ? (
                     <span style={{ maxWidth: '600px', overflow: 'hidden' }}>
-                        {todoItem.description}
+                        {description}
                     </span>
                 ) : (
                     ''
@@ -40,9 +48,9 @@ export default function TodoListItem({ actions, todoItem, id, parentCatLinkPath 
             rightIconButton={
                 <Link
                     style={{ color: 'inherit', textDecoration: 'none' }}
-                    to={!todoItem.completed ? itemLinkPath : parentCatLinkPath}
+                    to={!completed ? itemLinkPath : parentCatLinkPath}
                 >
-                    <IconButton disabled={todoItem.completed} onClick={handleEditItem}>
+                    <IconButton disabled={completed} onClick={handleEditItem}>
                         <ModeEdit />
                     </IconButton>
                 </Link>
@@ -50,8 +58,8 @@ export default function TodoListItem({ actions, todoItem, id, parentCatLinkPath 
             leftCheckbox={
                 <Checkbox
                     onCheck={handleCompletedCheckboxToggle}
-                    checked={todoItem.completed}
-                    disabled={todoItem.completed}
+                    checked={completed}
+                    disabled={completed}
                 />
             }
         />

@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { Route } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import TodoCategoriesList from '../TodoCategoriesList/index.jsx';
-import { nameToUrl } from '../../utils';
+import { getCategoriesRootPath, nameToUrl } from '../../utils';
 import './index.css';
+import { addTodoCategory } from '../../redux/slices/todoListSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
-export default function Sidebar({ actions, root, categoriesStorage }) {
+export default function Sidebar() {
     const [newCategory, setNewCategory] = useState('');
+    const dispatch = useAppDispatch();
+    const username = useAppSelector((state) => state.todoList.user);
 
     function handleAddCategoryInput(e) {
         setNewCategory(e.target.value);
@@ -17,8 +20,17 @@ export default function Sidebar({ actions, root, categoriesStorage }) {
     function submitCategoryAdd() {
         if (newCategory) {
             const name = newCategory;
-            const linkPath = root.linkPath + nameToUrl(name);
-            actions.AddCategory('root', name, crypto.randomUUID(), linkPath);
+            const linkPath = getCategoriesRootPath(username) + nameToUrl(name);
+            dispatch(
+                addTodoCategory({
+                    id: crypto.randomUUID(),
+                    name,
+                    completed: false,
+                    visible: true,
+                    linkPath,
+                    parentCategoryId: 'root',
+                })
+            );
             setNewCategory('');
         }
     }
@@ -43,16 +55,7 @@ export default function Sidebar({ actions, root, categoriesStorage }) {
                     />
                     <FlatButton label='Add' onClick={submitCategoryAdd} />
                 </div>
-                <Route
-                    render={(props) => (
-                        <TodoCategoriesList
-                            {...props}
-                            actions={actions}
-                            root={root}
-                            categoriesStorage={categoriesStorage}
-                        />
-                    )}
-                />
+                <TodoCategoriesList />
             </Paper>
         </aside>
     );
