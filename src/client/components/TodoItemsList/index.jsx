@@ -5,7 +5,7 @@ import { getCategoryById } from '../../redux/slices/todoCategoriesSlice';
 import { getItemsByParent } from '../../redux/slices/todoItemsSlice';
 import { useMemo } from 'react';
 
-export default function TodoItemsList({ actions, categoryId }) {
+export default function TodoItemsList({ categoryId }) {
     const filter = useAppSelector((state) => state.appView.filter);
     const showCompleted = useAppSelector((state) => state.appView.showCompleted);
     const linkPath = useAppSelector(
@@ -33,7 +33,6 @@ export default function TodoItemsList({ actions, categoryId }) {
                     value={item.id} // isn't used by component, can be deleted?
                     key={item.id}
                     todoItem={item}
-                    actions={actions}
                     parentCatLinkPath={linkPath}
                 />
             ))}
