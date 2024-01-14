@@ -50,9 +50,7 @@ TodoListSchema.methods.deleteEverythingInCategory = function (todoCatId) {
     );
     const todoCat = this.categoriesStorage[todoCatIndex];
     todoCat.itemsIds.forEach((itemId) => {
-        const itemIndex = this.itemsStorage.findIndex(
-            (item) => item.id === itemId
-        );
+        const itemIndex = this.itemsStorage.findIndex((item) => item.id === itemId);
         this.itemsStorage.splice(itemIndex, 1);
     });
     todoCat.categoriesIds.forEach((id) => {
@@ -81,9 +79,7 @@ TodoListSchema.methods.deleteCategory = function (todoCatId) {
 };
 
 TodoListSchema.methods.rebuildLinkPaths = function (id, parentLinkPath) {
-    const todoCat = this.categoriesStorage.find(
-        (category) => category.id === id
-    );
+    const todoCat = this.categoriesStorage.find((category) => category.id === id);
     todoCat.linkPath = parentLinkPath + '/' + todoCat.name.split(' ').join('-');
     todoCat.categoriesIds.forEach((catId) => {
         this.rebuildLinkPaths(catId, todoCat.linkPath);
@@ -109,21 +105,19 @@ TodoListSchema.methods.recalculateCategoryProgress = function (catId) {
     if (catId === 'root') {
         return;
     }
-    const todoCat = this.categoriesStorage.find(
-        (category) => category.id === catId
-    );
+    const todoCat = this.categoriesStorage.find((category) => category.id === catId);
     if (
+        todoCat.itemsIds.length &&
+        todoCat.categoriesIds.length &&
         todoCat.itemsIds.every(
-            (itemId) =>
-                this.itemsStorage.find((item) => item.id === itemId).completed
+            (itemId) => this.itemsStorage.find((item) => item.id === itemId).completed
         )
     ) {
         todoCat.completed = true;
         if (
             todoCat.categoriesIds.every(
                 (catId) =>
-                    !this.categoriesStorage.find((cat) => cat.id === catId)
-                        .visible
+                    !this.categoriesStorage.find((cat) => cat.id === catId).visible
             ) &&
             todoCat.itemsIds.length
         ) {
@@ -151,7 +145,7 @@ TodoListSchema.methods.editTodoItem = function (params) {
     if (newName) {
         todoItem.name = newName;
     }
-    if (newDescription) {
+    if (typeof newDescription === 'string') {
         todoItem.description = newDescription;
     }
     if (isCompleted) {
@@ -162,9 +156,7 @@ TodoListSchema.methods.editTodoItem = function (params) {
 };
 
 TodoListSchema.methods.moveTodoItem = function (params) {
-    const todoItem = this.itemsStorage.find(
-        (item) => item.id === params.itemId
-    );
+    const todoItem = this.itemsStorage.find((item) => item.id === params.itemId);
     const oldTodoCatIndex = this.categoriesStorage.findIndex(
         (category) => category.id === todoItem.parentCategoryId
     );

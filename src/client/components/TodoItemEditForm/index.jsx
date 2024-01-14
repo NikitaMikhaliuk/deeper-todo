@@ -5,14 +5,23 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { grey400 } from 'material-ui/styles/colors';
 import './index.css';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getItemById } from '../../redux/slices/todoItemsSlice';
+import { chooseItemToEdit } from '../../redux/slices/appViewSlice';
+import { getCategoryById } from '../../redux/slices/todoCategoriesSlice';
+import { editTodoItem } from '../../redux/slices/todoListSlice';
 
-export default function TodoItemEditForm({
-    actions,
-    filter,
-    parentCatLinkPath,
-    todoItem,
-    todoItemId,
-}) {
+export default function TodoItemEditForm() {
+    const filter = useAppSelector((state) => state.appView.filter);
+    const chosenItemToEditId = useAppSelector(
+        (state) => state.appView.chosenItemToEditId
+    );
+    const chosenCategoryId = useAppSelector((state) => state.appView.chosenCategoryId);
+    const chosenCatLinkPath = useAppSelector(
+        (state) => getCategoryById(state, chosenCategoryId).linkPath
+    );
+    const todoItem = useAppSelector((state) => getItemById(state, chosenItemToEditId));
+    const dispatch = useAppDispatch();
     const [name, setName] = useState(todoItem.name);
     const [description, setDescription] = useState(todoItem.description);
     const [done, setDone] = useState(todoItem.completed);
@@ -30,11 +39,21 @@ export default function TodoItemEditForm({
     }
 
     function handleSubmitItemEdit() {
-        actions.EditTodoItem(todoItemId, done, name, description);
+        dispatch(
+            editTodoItem({
+                id: chosenItemToEditId,
+                changes: {
+                    completed: done,
+                    name,
+                    description,
+                },
+            })
+        );
+        dispatch(chooseItemToEdit(''));
     }
 
     function handleCancelEdit() {
-        actions.ChoseItemToEdit(null);
+        dispatch(chooseItemToEdit(''));
     }
 
     return (
@@ -42,16 +61,17 @@ export default function TodoItemEditForm({
             <div className='b-todoitem-edit-form__controls'>
                 <Link
                     className='b-todoitem-edit-form__link-button'
-                    to={parentCatLinkPath + (filter ? `&filter=${filter}` : '')}
+                    to={chosenCatLinkPath + (filter ? `&filter=${filter}` : '')}
                 >
                     <RaisedButton
                         label='Save changes'
+                        disabled={!name}
                         onClick={handleSubmitItemEdit}
                     />
                 </Link>
                 <Link
                     className='b-todoitem-edit-form__link-button'
-                    to={parentCatLinkPath + (filter ? `&filter=${filter}` : '')}
+                    to={chosenCatLinkPath + (filter ? `&filter=${filter}` : '')}
                 >
                     <RaisedButton label='Cancel' onClick={handleCancelEdit} />
                 </Link>
@@ -67,11 +87,7 @@ export default function TodoItemEditForm({
                     }}
                 />
                 <br />
-                <Checkbox
-                    label='Done'
-                    checked={done}
-                    onCheck={handleDoneCheckbox}
-                />
+                <Checkbox label='Done' checked={done} onCheck={handleDoneCheckbox} />
                 <br />
                 <TextField
                     hintText='Task Description'

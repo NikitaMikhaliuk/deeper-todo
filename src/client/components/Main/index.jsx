@@ -1,23 +1,23 @@
 import { useState } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import TodoItemsList from '../TodoItemsList/index.jsx';
 import TodoItemEditForm from '../TodoItemEditForm/index.jsx';
 import './index.css';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getCategoryById } from '../../redux/slices/todoCategoriesSlice';
+import { addTodoItem } from '../../redux/slices/todoListSlice';
 
-export default function Main({
-    chosenCategory,
-    chosenCategoryId,
-    chosenItemToEditId,
-    itemsStorage,
-    actions,
-    filter,
-    showCompleted,
-    rootLinkpath,
-}) {
+export default function Main() {
     const [newItem, setNewItem] = useState('');
+    const filter = useAppSelector((state) => state.appView.filter);
+    const chosenCategoryId = useAppSelector((state) => state.appView.chosenCategoryId);
+    const chosenCategory = useAppSelector((state) =>
+        getCategoryById(state, chosenCategoryId)
+    );
+    const dispatch = useAppDispatch();
 
     function handleAddItemInputChange(e) {
         setNewItem(e.target.value);
@@ -25,28 +25,36 @@ export default function Main({
 
     function handleSubmitAddItem() {
         if (newItem) {
-            actions.AddTodoItem(crypto.randomUUID(), newItem, chosenCategoryId);
+            dispatch(
+                addTodoItem({
+                    id: crypto.randomUUID(),
+                    name: newItem,
+                    description: '',
+                    completed: false,
+                    parentCategoryId: chosenCategoryId,
+                })
+            );
             setNewItem('');
         }
     }
+    if (chosenCategory) {
+        const { completed: catCompleted, linkPath: catLinkPath } = chosenCategory;
 
-    const linkPath = chosenCategory ? chosenCategory.linkPath : '/';
-    return (
-        <main className='b-main'>
-            <Paper
-                zDepth={1}
-                style={{
-                    width: '100%',
-                    height: '100%',
-                }}
-            >
-                <Switch>
-                    <Route
-                        exact
-                        path={linkPath + (filter ? `&filter=${filter}` : '')}
-                        render={() => {
-                            return chosenCategory ? (
-                                <div>
+        return (
+            <main className='b-main'>
+                <Paper
+                    zDepth={1}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                    }}
+                >
+                    <Switch>
+                        <Route
+                            exact
+                            path={catLinkPath + (filter ? `&filter=${filter}` : '')}
+                            render={() => (
+                                <>
                                     <div className='b-main__add-task-form'>
                                         <TextField
                                             onChange={handleAddItemInputChange}
@@ -59,44 +67,20 @@ export default function Main({
                                         <FlatButton
                                             label='Add'
                                             onClick={handleSubmitAddItem}
-                                            disabled={chosenCategory.completed}
+                                            disabled={catCompleted}
                                         />
                                     </div>
-                                    <TodoItemsList
-                                        actions={actions}
-                                        itemsToRenderIds={
-                                            chosenCategory.itemsIds
-                                        }
-                                        parentCatLinkPath={
-                                            chosenCategory.linkPath
-                                        }
-                                        itemsStorage={itemsStorage}
-                                        filter={filter}
-                                        showCompleted={showCompleted}
-                                    />
-                                </div>
-                            ) : (
-                                <Redirect to={rootLinkpath} />
-                            );
-                        }}
-                    />
-                    <Route
-                        path={linkPath + '/:itemName'}
-                        render={() => {
-                            return (
-                                <TodoItemEditForm
-                                    todoItem={itemsStorage[chosenItemToEditId]}
-                                    todoItemId={chosenItemToEditId}
-                                    parentCatLinkPath={linkPath}
-                                    actions={actions}
-                                    filter={filter}
-                                />
-                            );
-                        }}
-                    />
-                    <Redirect to={rootLinkpath} />
-                </Switch>
-            </Paper>
-        </main>
-    );
+                                    <TodoItemsList categoryId={chosenCategoryId} />
+                                </>
+                            )}
+                        />
+                        <Route
+                            path={catLinkPath + '/:itemName'}
+                            render={() => <TodoItemEditForm />}
+                        />
+                    </Switch>
+                </Paper>
+            </main>
+        );
+    }
 }
