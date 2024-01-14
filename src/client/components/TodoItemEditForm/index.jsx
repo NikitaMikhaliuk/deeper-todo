@@ -16,11 +16,12 @@ export default function TodoItemEditForm() {
     const chosenItemToEditId = useAppSelector(
         (state) => state.appView.chosenItemToEditId
     );
+    const chosenCategoryId = useAppSelector((state) => state.appView.chosenCategoryId);
+    const chosenCatLinkPath = useAppSelector(
+        (state) => getCategoryById(state, chosenCategoryId).linkPath
+    );
     const todoItem = useAppSelector((state) => getItemById(state, chosenItemToEditId));
     const dispatch = useAppDispatch();
-    const parentCatLinkPath = useAppSelector(
-        (state) => getCategoryById(state, todoItem.parentCategoryId).linkPath
-    );
     const [name, setName] = useState(todoItem.name);
     const [description, setDescription] = useState(todoItem.description);
     const [done, setDone] = useState(todoItem.completed);
@@ -60,7 +61,7 @@ export default function TodoItemEditForm() {
             <div className='b-todoitem-edit-form__controls'>
                 <Link
                     className='b-todoitem-edit-form__link-button'
-                    to={parentCatLinkPath + (filter ? `&filter=${filter}` : '')}
+                    to={chosenCatLinkPath + (filter ? `&filter=${filter}` : '')}
                 >
                     <RaisedButton
                         label='Save changes'
@@ -70,7 +71,7 @@ export default function TodoItemEditForm() {
                 </Link>
                 <Link
                     className='b-todoitem-edit-form__link-button'
-                    to={parentCatLinkPath + (filter ? `&filter=${filter}` : '')}
+                    to={chosenCatLinkPath + (filter ? `&filter=${filter}` : '')}
                 >
                     <RaisedButton label='Cancel' onClick={handleCancelEdit} />
                 </Link>
