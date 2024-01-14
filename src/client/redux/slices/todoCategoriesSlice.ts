@@ -100,8 +100,18 @@ export const { getAllCategories, getCategoryById } = todoCategoriesSlice.selecto
 
 export const makeGetCategoryIdsByParent = (parentId: string) =>
     createSelector(
-        [(state: RootState) => state.todoCategories.idsGroupedByParent],
-        (idsGroupedByParent) => idsGroupedByParent[parentId]
+        [(state: RootState) => state.todoCategories.idsGroupedByParent[parentId]],
+        (ids) => ids || []
     );
+
+export const makeGetCategoriesByIds = (catIds: string[]) => {
+    const inputCategoriesSelectors = catIds.map(
+        (catId) => (state: RootState) => getCategoryById(state, catId)
+    );
+    return createSelector([...inputCategoriesSelectors], (...categories) => {
+        console.log('categories', categories);
+        return categories;
+    });
+};
 
 export default todoCategoriesSlice.reducer;

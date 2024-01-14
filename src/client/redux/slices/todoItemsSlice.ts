@@ -32,7 +32,8 @@ type InitialState = {
 };
 
 const todoItemsAdapter = createEntityAdapter<TodoItem>({});
-const { selectAll, selectById, selectTotal } = todoItemsAdapter.getSelectors();
+const { selectAll, selectById, selectEntities, selectTotal } =
+    todoItemsAdapter.getSelectors();
 
 type TodoItemsSliceState = InitialState &
     ReturnType<typeof todoItemsAdapter.getInitialState>;
@@ -97,12 +98,13 @@ export const todoItemsSlice = createSlice({
     selectors: {
         getItemById: selectById,
         getAllItems: selectAll,
-        getItemIdsByParent: createSelector(
+        getItemsByParent: createSelector(
             [
-                (state: TodoItemsSliceState) => state.idsGroupedByParent,
-                (_state, categoryId: string) => categoryId,
+                (state: TodoItemsSliceState, categoryId: string) =>
+                    state.idsGroupedByParent[categoryId],
+                (state: TodoItemsSliceState) => selectEntities(state),
             ],
-            (idsGroupedByParent, categoryId) => idsGroupedByParent[categoryId]
+            (itemIds, entities) => itemIds.map((itemId) => entities[itemId])
         ),
         getProgress: createSelector(
             [
@@ -121,7 +123,7 @@ export const todoItemsSlice = createSlice({
 
 export const { setItems, addItem, editItem, moveItem, deleteItem } =
     todoItemsSlice.actions;
-export const { getItemById, getAllItems, getItemIdsByParent, getProgress } =
+export const { getItemById, getAllItems, getItemsByParent, getProgress } =
     todoItemsSlice.selectors;
 
 export default todoItemsSlice.reducer;

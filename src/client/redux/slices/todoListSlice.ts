@@ -69,11 +69,11 @@ function calcCategoriesToDelete(rootCatId: string, state: RootState): string[] {
     return [];
 }
 
-const getRootCategories = makeGetCategoryIdsByParent('root');
+const getRootCatIds = makeGetCategoryIdsByParent('root');
 
 function makeHistoryEntry(state: RootState): TodoListHistoryEntry {
     const categories = getAllCategories(state);
-    const rootCategoriesIds = getRootCategories(state);
+    const rootCategoriesIds = getRootCatIds(state);
     const items = getAllItems(state);
     const { idsGroupedByParent: categoryIdsGroupedByParent } = state.todoCategories;
     const { idsGroupedByParent: itemIdsGroupedByParent } = state.todoItems;
