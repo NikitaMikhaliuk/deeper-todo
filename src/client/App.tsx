@@ -24,7 +24,6 @@ const AppComponent: FC<{ location: Location }> = ({ location }) => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        console.log('fetch runs');
         dispatch(fetchTodoList(username));
     }, [username, dispatch]);
 

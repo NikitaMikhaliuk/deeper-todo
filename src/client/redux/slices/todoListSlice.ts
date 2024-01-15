@@ -276,11 +276,10 @@ export const todoListSlice = createTodoSlice({
 
                 dispatch(editItem(params));
 
-                // update category 'completed' state if all items are completed
+                // update category 'itemsCompleted' state if all items are completed
                 const udatedState = getState() as RootState;
                 const { parentCategoryId } = getItemById(udatedState, id);
                 const categoryItems = getItemsByParent(udatedState, parentCategoryId);
-                console.log('ON ITEM EDIT1:', categoryItems);
                 if (categoryItems.every((item) => item.completed)) {
                     dispatch(
                         onItemsCompletedChange({

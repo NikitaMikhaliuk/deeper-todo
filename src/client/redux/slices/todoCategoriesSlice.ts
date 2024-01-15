@@ -101,7 +101,6 @@ export const todoCategoriesSlice = createSlice({
                 },
             });
             updateCategoriesCompleted(state, id);
-            console.log('ON ITEM EDIT2:', state);
         },
         renameCategory: (state, action: PayloadAction<TodoCategoryRenameOptions>) => {
             const { id } = action.payload;

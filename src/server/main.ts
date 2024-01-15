@@ -7,6 +7,5 @@ ViteExpress.config({
     ignorePaths: (path) => path.includes('/api'),
 });
 ViteExpress.listen(app, PORT, () => {
-    console.log(process.env.NODE_ENV);
     console.log(`Server is running on http://localhost:${PORT}...`);
 });
