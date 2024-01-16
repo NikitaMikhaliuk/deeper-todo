@@ -2,8 +2,6 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ListItem } from 'material-ui/List';
 import { grey400 } from 'material-ui/styles/colors';
-import SubdirectoryArrowRight from 'material-ui/svg-icons/navigation/subdirectory-arrow-right';
-import IconButton from 'material-ui/IconButton';
 import OptionsMenu from './OptionsMenu';
 import MyInputForm from '../MyInputForm';
 import DeleteItemModalDialog from '../DeleteItemModalDialog';
@@ -17,7 +15,6 @@ import {
 import {
     addTodoCategory,
     deleteTodoCategory,
-    moveTodoItem,
     renameTodoCategory,
 } from '../../redux/slices/todoListSlice';
 
@@ -35,15 +32,12 @@ const styles = {
 
 export default function TodoCategoryListItem({ todoCategory, renderNestedList }) {
     const filter = useAppSelector((state) => state.appView.filter);
-    const chosenItemToEditId = useAppSelector(
-        (state) => state.appView.chosenItemToEditId
-    );
     const chosenCategoryId = useAppSelector((state) => state.appView.chosenCategoryId);
     const dispatch = useAppDispatch();
     const [isEditing, setIsEditing] = useState(false);
     const [showAddNestedCatForm, setShowAddNestedCatForm] = useState(false);
     const [showDeleteModalDialog, setShowDeleteModalDialog] = useState(false);
-    const { id, name, parentCategoryId, linkPath, completed, visible } = todoCategory;
+    const { id, name, linkPath, completed, visible } = todoCategory;
 
     const getNestedCatIds = useMemo(() => makeGetCategoryIdsByParent(id), [id]);
     const nestedCatIds = useAppSelector(getNestedCatIds);
@@ -54,9 +48,6 @@ export default function TodoCategoryListItem({ todoCategory, renderNestedList })
     );
 
     const nestedCategories = useAppSelector(getNestedCategories);
-
-    const catItemsIds =
-        useAppSelector((state) => state.todoItems.idsGroupedByParent[id]) || [];
 
     function handleListItemSelect() {
         dispatch(chooseCategory(id));
@@ -118,17 +109,6 @@ export default function TodoCategoryListItem({ todoCategory, renderNestedList })
         setShowDeleteModalDialog(false);
     }
 
-    function handleMoveItemInCategory() {
-        dispatch(
-            moveTodoItem({
-                id: chosenItemToEditId,
-                changes: {
-                    parentCategoryId: id,
-                },
-            })
-        );
-    }
-
     const childToRender = isEditing ? (
         <MyInputForm
             key={id + 'RenameInput'}
@@ -172,25 +152,12 @@ export default function TodoCategoryListItem({ todoCategory, renderNestedList })
               </ListItem>,
           ].concat(nestedArr)
         : nestedArr;
-    const leftIconToRender =
-        chosenItemToEditId && !catItemsIds.includes(chosenItemToEditId) ? (
-            <IconButton
-                style={{ margin: '0' }}
-                onClick={handleMoveItemInCategory}
-                tooltip='Move item'
-                tooltipPosition='bottom-right'
-                disabled={completed}
-            >
-                <SubdirectoryArrowRight />
-            </IconButton>
-        ) : (
-            OptionsMenu({
-                handleRenameCat,
-                handleAddNestedCat,
-                handleDeleteCat,
-                disabled: completed,
-            })
-        );
+    const leftIconToRender = OptionsMenu({
+        handleRenameCat,
+        handleAddNestedCat,
+        handleDeleteCat,
+        disabled: completed,
+    });
 
     const childrenToRender = [
         childToRender,
