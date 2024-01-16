@@ -15,6 +15,14 @@ module.exports = {
         'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
         'no-use-before-define': 2,
         '@typescript-eslint/no-unused-vars': 0,
-        'no-unused-vars': ['warn', { ignorePatterns: ['*.ts*'] }],
+        'no-unused-vars': 2,
     },
+    overrides: [
+        {
+            files: ['*.ts', '*.tsx'],
+            rules: {
+                'no-unused-vars': 'off',
+            },
+        },
+    ],
 };
